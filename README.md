@@ -53,11 +53,17 @@ Isso cria um rascunho de release com o instalador e o `latest.yml`; abra o relea
 - **Programas**: o desinstalador do próprio programa roda; depois o app procura sobras com nome exatamente igual. Pastas vão para a Lixeira.
 - **Instalar**: lista em `resources/winget-catalog.json`.
 
+## Jogos e Modo jogo
+
+- **Biblioteca**: detecta Steam (todas as bibliotecas), Epic, GOG e Ubisoft Connect; outros jogos entram por "Adicionar jogo". Capas vêm do CDN da Steam (para jogos de outras lojas, o nome é buscado na Steam só para achar a capa).
+- **Ajustes por jogo** (grátis): prioridade alta de CPU (Image File Execution Options), GPU dedicada (UserGpuPreferences) e sem otimizações de tela cheia (AppCompatFlags) para o `.exe` do jogo.
+- **Modo jogo** (Premium): ao detectar um processo dentro da pasta de um jogo da Biblioteca, troca o plano de energia, fixa o timer em 0,5 ms, pausa serviços, libera RAM e sobe a prioridade do jogo. Tudo é desfeito quando o jogo fecha, quando o app sai e, se o app cair, na próxima abertura.
+
 ## Etapas
 
 1. **Núcleo** (pronto): painel, ajustes, backup, configurações
 2. **Licença e atualização automática** (pronto)
 3. **Limpeza e aplicativos** (pronto): limpeza de arquivos, RAM e registro; remoção de apps do Windows, desinstalador com sobras e instalação via winget
-4. Jogos e modo jogo
+4. **Jogos e Modo jogo** (pronto): biblioteca com capas, ajustes por jogo e perfil de desempenho automático
 5. Placa de vídeo, hardware, drivers e utilitários
 6. BIOS

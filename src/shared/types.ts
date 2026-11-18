@@ -106,7 +106,22 @@ export const INVOKE_CHANNELS = [
   'apps:leftovers',
   'apps:leftovers-remove',
   'apps:winget-list',
-  'apps:winget-install'
+  'apps:winget-install',
+  'games:list',
+  'games:scan',
+  'games:add',
+  'games:update',
+  'games:remove',
+  'games:launch',
+  'games:exe-candidates',
+  'games:setting',
+  'games:open-folder',
+  'gamemode:state',
+  'gamemode:prefs',
+  'gamemode:set-prefs',
+  'gamemode:activate',
+  'gamemode:deactivate',
+  'gamemode:services'
 ] as const
 export type InvokeChannel = (typeof INVOKE_CHANNELS)[number]
 
@@ -114,7 +129,7 @@ export const SEND_CHANNELS = ['window:minimize', 'window:maximize', 'window:clos
 export type SendChannel = (typeof SEND_CHANNELS)[number]
 
 /** Events the main process pushes to the renderer. */
-export const ON_CHANNELS = ['license:changed', 'updater:changed', 'progress'] as const
+export const ON_CHANNELS = ['license:changed', 'updater:changed', 'progress', 'gamemode:changed'] as const
 export type OnChannel = (typeof ON_CHANNELS)[number]
 
 export type Plan = 'free' | 'premium'
@@ -158,7 +173,7 @@ export interface UpdaterState {
 }
 
 export interface ActivityEntry {
-  kind: 'applied' | 'reverted' | 'restore-point' | 'cleaned' | 'apps-removed'
+  kind: 'applied' | 'reverted' | 'restore-point' | 'cleaned' | 'apps-removed' | 'gamemode'
   title: string
   at: string
 }
@@ -279,4 +294,53 @@ export interface ProgressEvent {
   current?: string
   done: number
   total: number
+}
+
+// ---------- Etapa 4: jogos ----------
+
+export type GameSource = 'steam' | 'epic' | 'gog' | 'ubisoft' | 'manual'
+
+export interface GameSettings {
+  /** Image File Execution Options: CPU priority High every time the exe starts */
+  highPriority: boolean
+  /** Graphics settings: always use the high-performance (dedicated) GPU */
+  gpuHigh: boolean
+  /** Compatibility flag: disable fullscreen optimizations */
+  noFso: boolean
+}
+
+export interface Game {
+  id: string
+  name: string
+  source: GameSource
+  installDir: string
+  /** main executable, used for per-game settings and launching manual games */
+  exe?: string
+  launchUri?: string
+  steamAppId?: number
+  /** Steam app id used for the cover art (same as steamAppId for Steam games) */
+  coverAppId?: number | null
+  sizeGb?: number
+  hidden?: boolean
+  settings: GameSettings
+}
+
+export interface GameModePrefs {
+  autoActivate: boolean
+  powerPlan: boolean
+  timerResolution: boolean
+  freeRam: boolean
+  raisePriority: boolean
+  stopServices: boolean
+  services: string[]
+}
+
+export interface GameModeState {
+  active: boolean
+  /** true when started by the user instead of by detecting a game */
+  manual: boolean
+  game?: { id: string; name: string }
+  since?: string
+  applied: string[]
+  error?: string
 }

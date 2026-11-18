@@ -5,9 +5,10 @@ interface Props {
   children: ReactNode
   onClose: () => void
   actions: ReactNode
+  wide?: boolean
 }
 
-export function Modal({ title, children, onClose, actions }: Props) {
+export function Modal({ title, children, onClose, actions, wide }: Props) {
   const ref = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     ref.current?.showModal()
@@ -17,7 +18,7 @@ export function Modal({ title, children, onClose, actions }: Props) {
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-auto w-[520px] max-w-[92vw] rounded-[14px] border border-line bg-card p-0 text-ink backdrop:bg-black/50"
+      className={`m-auto ${wide ? 'w-[760px]' : 'w-[520px]'} max-w-[92vw] rounded-[14px] border border-line bg-card p-0 text-ink backdrop:bg-black/50`}
     >
       <div className="px-6 pb-5 pt-5">
         <h2 className="text-[18px] font-semibold">{title}</h2>

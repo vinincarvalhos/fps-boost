@@ -1,5 +1,5 @@
 import Store from 'electron-store'
-import type { ActivityEntry, AppxRemoved, Settings } from '@shared/types'
+import type { ActivityEntry, AppxRemoved, Game, GameModePrefs, Settings } from '@shared/types'
 
 interface Schema {
   settings: Settings
@@ -12,6 +12,10 @@ interface Schema {
   appxHistory: AppxRemoved[]
   /** folders the user added to the cleaner */
   cleanFolders: string[]
+  games: Game[]
+  gameModePrefs: Partial<GameModePrefs>
+  /** what the running game mode changed, so it can be undone after a crash */
+  gameModeRestore: { previousPlan?: string; stoppedServices: string[] } | null
 }
 
 export const store = new Store<Schema>({
@@ -22,7 +26,10 @@ export const store = new Store<Schema>({
     firstTweakRestorePointDone: false,
     history: [],
     appxHistory: [],
-    cleanFolders: []
+    cleanFolders: [],
+    games: [],
+    gameModePrefs: {},
+    gameModeRestore: null
   }
 })
 

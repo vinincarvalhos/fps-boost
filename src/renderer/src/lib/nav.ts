@@ -49,8 +49,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Jogos',
     items: [
-      { path: '/games', label: 'Biblioteca', icon: Trophy, phase: 4, summary: 'Seus jogos da Steam, Epic e outros num só lugar.' },
-      { path: '/gamemode', label: 'Modo jogo', icon: Gamepad2, phase: 4, summary: 'Um perfil de desempenho que liga sozinho quando o jogo abre.' }
+      { path: '/games', label: 'Biblioteca', icon: Trophy, phase: 1, summary: 'Seus jogos da Steam, Epic e outros num só lugar.' },
+      { path: '/gamemode', label: 'Modo jogo', icon: Gamepad2, phase: 1, summary: 'Um perfil de desempenho que liga sozinho quando o jogo abre.' }
     ]
   },
   {

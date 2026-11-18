@@ -33,7 +33,7 @@ export function setTrayEnabled(enabled: boolean): void {
     Menu.buildFromTemplate([
       { label: 'Abrir FpsBoost', click: show },
       { type: 'separator' },
-      { label: 'Sair', click: () => app.exit(0) }
+      { label: 'Sair', click: () => app.quit() }
     ])
   )
 }

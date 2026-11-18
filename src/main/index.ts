@@ -7,6 +7,8 @@ import { registerSystemIpc } from './ipc/system'
 import { registerTweakIpc } from './ipc/tweaks'
 import { registerAccountIpc } from './ipc/account'
 import { registerPhase3Ipc } from './ipc/phase3'
+import { registerGamesIpc } from './ipc/games'
+import { initGameMode, shutdownGameMode } from './services/gamemode'
 import { initLicense } from './services/license'
 import { initUpdater } from './services/updater'
 import { store } from './services/store'
@@ -19,6 +21,8 @@ log.initialize()
 log.info('FpsBoost iniciando', app.getVersion())
 
 let win: BrowserWindow | null = null
+/** set once the app is really exiting, so closing the window no longer hides it to the tray */
+let quitting = false
 
 function createWindow(): void {
   win = new BrowserWindow({
@@ -45,7 +49,7 @@ function createWindow(): void {
 
   // Closing hides to tray when the tray is on.
   win.on('close', (e) => {
-    if (isTrayEnabled()) {
+    if (isTrayEnabled() && !quitting) {
       e.preventDefault()
       win?.hide()
     }
@@ -82,6 +86,8 @@ if (!app.requestSingleInstanceLock()) {
     registerAppIpc()
     registerAccountIpc()
     registerPhase3Ipc()
+    registerGamesIpc()
+    initGameMode().catch((err) => log.error('[gamemode] init', err))
     initLicense().catch((err) => log.error('[license] init', err))
     initUpdater()
 
@@ -91,4 +97,16 @@ if (!app.requestSingleInstanceLock()) {
   })
 
   app.on('window-all-closed', () => app.quit())
+
+  // put power plan, services and timer back before exiting
+  let shuttingDown = false
+  app.on('before-quit', (e) => {
+    quitting = true
+    if (shuttingDown) return
+    e.preventDefault()
+    shuttingDown = true
+    shutdownGameMode()
+      .catch((err) => log.warn('[gamemode] shutdown', err))
+      .finally(() => app.quit())
+  })
 }
