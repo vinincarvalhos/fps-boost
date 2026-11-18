@@ -13,6 +13,10 @@ import { Clean } from './pages/Clean'
 import { Apps } from './pages/Apps'
 import { Games } from './pages/Games'
 import { GameMode } from './pages/GameMode'
+import { Gpu } from './pages/Gpu'
+import { Devices } from './pages/Devices'
+import { Drivers } from './pages/Drivers'
+import { Utilities } from './pages/Utilities'
 import { ComingSoon } from './pages/ComingSoon'
 import { NAV } from './lib/nav'
 
@@ -32,6 +36,10 @@ createRoot(document.getElementById('root')!).render(
           <Route path="apps" element={<Apps />} />
           <Route path="games" element={<Games />} />
           <Route path="gamemode" element={<GameMode />} />
+          <Route path="gpu-optimizer" element={<Gpu />} />
+          <Route path="hardware" element={<Devices />} />
+          <Route path="drivers" element={<Drivers />} />
+          <Route path="utilities" element={<Utilities />} />
           {NAV.filter((n) => n.phase > 1).map((n) => (
             <Route key={n.path} path={n.path.slice(1)} element={<ComingSoon item={n} />} />
           ))}

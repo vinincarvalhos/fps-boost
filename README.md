@@ -59,11 +59,18 @@ Isso cria um rascunho de release com o instalador e o `latest.yml`; abra o relea
 - **Ajustes por jogo** (grátis): prioridade alta de CPU (Image File Execution Options), GPU dedicada (UserGpuPreferences) e sem otimizações de tela cheia (AppCompatFlags) para o `.exe` do jogo.
 - **Modo jogo** (Premium): ao detectar um processo dentro da pasta de um jogo da Biblioteca, troca o plano de energia, fixa o timer em 0,5 ms, pausa serviços, libera RAM e sobe a prioridade do jogo. Tudo é desfeito quando o jogo fecha, quando o app sai e, se o app cair, na próxima abertura.
 
+## Placa de vídeo, dispositivos, drivers e utilitários
+
+- **Placa de vídeo**: métricas em tempo real via `nvidia-smi`. O otimizador da NVIDIA (Premium) baixa sob demanda o [NVIDIA Profile Inspector](https://github.com/Orbmu2k/nvidiaProfileInspector) v3.0.2.1 (licença MIT), confere o SHA-256 da versão oficial e importa um `.nip` no perfil global com `-silentImport -mergeImport`, então só as configurações marcadas mudam. Antes da primeira mudança, `-exportCustomized` guarda o perfil global; "Restaurar o anterior" o reimporta com `-replaceImport`. IDs e valores vêm do `NvApiDriverSettings.h` da NVIDIA.
+- **Dispositivos**: modo MSI (só liga; só desliga onde o próprio app ligou; nunca desliga em controladores de disco), suspensão seletiva do USB, velocidade do mouse e repetição do teclado.
+- **Drivers**: inventário com a idade de cada driver e instalação de atualizações pelo Windows Update; o driver de vídeo aponta para o instalador oficial do fabricante.
+- **Utilitários**: teste de velocidade de DNS e troca para o mais rápido (ou volta ao automático), TRIM/desfragmentação, limpar o cache de DNS, redefinir a rede e reiniciar o Explorador.
+
 ## Etapas
 
 1. **Núcleo** (pronto): painel, ajustes, backup, configurações
 2. **Licença e atualização automática** (pronto)
 3. **Limpeza e aplicativos** (pronto): limpeza de arquivos, RAM e registro; remoção de apps do Windows, desinstalador com sobras e instalação via winget
 4. **Jogos e Modo jogo** (pronto): biblioteca com capas, ajustes por jogo e perfil de desempenho automático
-5. Placa de vídeo, hardware, drivers e utilitários
+5. **Placa de vídeo, dispositivos, drivers e utilitários** (pronto)
 6. BIOS

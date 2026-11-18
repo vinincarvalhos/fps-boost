@@ -43,7 +43,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { path: '/clean', label: 'Limpeza', icon: Sparkles, phase: 1, summary: 'Arquivos temporários, caches, RAM e registro.' },
       { path: '/apps', label: 'Aplicativos', icon: Package, phase: 1, summary: 'Remova apps nativos do Windows e desinstale programas sem deixar sobras.' },
-      { path: '/utilities', label: 'Utilitários', icon: Wrench, phase: 5, summary: 'DNS mais rápido, otimização de disco e atalhos do sistema.' }
+      { path: '/utilities', label: 'Utilitários', icon: Wrench, phase: 1, summary: 'DNS mais rápido, otimização de disco e atalhos do sistema.' }
     ]
   },
   {
@@ -56,9 +56,9 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Hardware',
     items: [
-      { path: '/gpu-optimizer', label: 'Placa de vídeo', icon: MonitorCog, phase: 5, summary: 'Configurações de driver NVIDIA e AMD para menos latência.' },
-      { path: '/hardware', label: 'Dispositivos', icon: Cpu, phase: 5, summary: 'Interrupções em modo MSI, USB e periféricos.' },
-      { path: '/drivers', label: 'Drivers', icon: HardDriveDownload, phase: 5, summary: 'Verifica e baixa drivers atualizados.' },
+      { path: '/gpu-optimizer', label: 'Placa de vídeo', icon: MonitorCog, phase: 1, summary: 'Configurações de driver NVIDIA e AMD para menos latência.' },
+      { path: '/hardware', label: 'Dispositivos', icon: Cpu, phase: 1, summary: 'Interrupções em modo MSI, USB e periféricos.' },
+      { path: '/drivers', label: 'Drivers', icon: HardDriveDownload, phase: 1, summary: 'Verifica e baixa drivers atualizados.' },
       { path: '/bios', label: 'BIOS', icon: MemoryStick, phase: 6, summary: 'Reiniciar direto na configuração da placa-mãe.' }
     ]
   },

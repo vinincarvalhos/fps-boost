@@ -124,7 +124,30 @@ export const INVOKE_CHANNELS = [
   'gamemode:set-prefs',
   'gamemode:activate',
   'gamemode:deactivate',
-  'gamemode:services'
+  'gamemode:services',
+  'gpu:state',
+  'gpu:metrics',
+  'gpu:options',
+  'gpu:download-npi',
+  'gpu:apply',
+  'gpu:restore',
+  'gpu:open-amd',
+  'devices:msi',
+  'devices:set-msi',
+  'devices:usb-suspend',
+  'devices:set-usb-suspend',
+  'devices:input',
+  'devices:set-input',
+  'drivers:list',
+  'drivers:search',
+  'drivers:install',
+  'drivers:vendor-page',
+  'utils:dns-benchmark',
+  'utils:dns-apply',
+  'utils:volumes',
+  'utils:optimize',
+  'utils:flush-dns',
+  'utils:reset-network'
 ] as const
 export type InvokeChannel = (typeof INVOKE_CHANNELS)[number]
 
@@ -346,4 +369,94 @@ export interface GameModeState {
   since?: string
   applied: string[]
   error?: string
+}
+
+// ---------- Etapa 5: placa de vídeo, dispositivos, drivers, utilitários ----------
+
+export interface GpuMetrics {
+  name: string
+  driver: string
+  tempC: number | null
+  loadPct: number | null
+  coreMhz: number | null
+  memMhz: number | null
+  powerW: number | null
+  powerLimitW: number | null
+  vramUsedMb: number | null
+  vramTotalMb: number | null
+  fanPct: number | null
+}
+
+export interface NvSettingOption {
+  key: string
+  title: string
+  description: string
+  /** NVAPI setting id and the value FpsBoost writes */
+  id: number
+  value: number
+  recommended: boolean
+}
+
+export interface GpuState {
+  vendor: 'nvidia' | 'amd' | 'intel' | 'other'
+  model: string
+  driver?: string
+  metricsAvailable: boolean
+  /** NVIDIA Profile Inspector is downloaded and verified */
+  npiReady: boolean
+  /** a backup of the driver profile exists, so "Restaurar" can undo */
+  backupAt?: string
+  appliedAt?: string
+  appliedKeys: string[]
+}
+
+export interface MsiDevice {
+  instanceId: string
+  name: string
+  kind: 'gpu' | 'network' | 'usb' | 'audio' | 'storage' | 'other'
+  msi: boolean | null
+  /** FpsBoost turned MSI on, so it may turn it back off */
+  changedByApp: boolean
+}
+
+export interface InputPrefs {
+  mouseSpeed: number // 1–20, Windows default 10
+  keyboardDelay: number // 0–3 (250–1000 ms)
+  keyboardSpeed: number // 0–31
+  mice: string[]
+  keyboards: string[]
+}
+
+export interface DriverInfo {
+  name: string
+  kind: string
+  provider: string
+  version: string
+  date?: string
+  ageDays?: number
+}
+
+export interface DriverUpdate {
+  id: string
+  title: string
+  provider: string
+  driverClass: string
+  date?: string
+  sizeMb: number
+}
+
+export interface DnsProvider {
+  id: string
+  name: string
+  servers: string[]
+  ms: number | null
+  current: boolean
+}
+
+export interface DiskVolume {
+  letter: string
+  label: string
+  media: 'SSD' | 'HDD' | 'Unspecified'
+  sizeGb: number
+  freeGb: number
 }

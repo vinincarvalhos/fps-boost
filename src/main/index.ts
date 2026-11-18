@@ -8,6 +8,7 @@ import { registerTweakIpc } from './ipc/tweaks'
 import { registerAccountIpc } from './ipc/account'
 import { registerPhase3Ipc } from './ipc/phase3'
 import { registerGamesIpc } from './ipc/games'
+import { registerPhase5Ipc } from './ipc/phase5'
 import { initGameMode, shutdownGameMode } from './services/gamemode'
 import { initLicense } from './services/license'
 import { initUpdater } from './services/updater'
@@ -89,6 +90,7 @@ if (!app.requestSingleInstanceLock()) {
     registerAccountIpc()
     registerPhase3Ipc()
     registerGamesIpc()
+    registerPhase5Ipc()
     initGameMode().catch((err) => log.error('[gamemode] init', err))
     initLicense().catch((err) => log.error('[license] init', err))
     initUpdater()

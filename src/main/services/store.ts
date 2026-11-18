@@ -16,6 +16,13 @@ interface Schema {
   gameModePrefs: Partial<GameModePrefs>
   /** what the running game mode changed, so it can be undone after a crash */
   gameModeRestore: { previousPlan?: string; stoppedServices: string[] } | null
+  /** backup of the NVIDIA global profile taken before FpsBoost first changed it */
+  gpuBackup: { file: string; at: string } | null
+  gpuApplied: { keys: string[]; at: string } | null
+  /** PCI instance ids whose MSI mode FpsBoost turned on */
+  msiChanged: string[]
+  /** USB selective suspend values before FpsBoost turned it off */
+  usbSuspendStash: { ac: number; dc: number } | null
 }
 
 export const store = new Store<Schema>({
@@ -29,7 +36,11 @@ export const store = new Store<Schema>({
     cleanFolders: [],
     games: [],
     gameModePrefs: {},
-    gameModeRestore: null
+    gameModeRestore: null,
+    gpuBackup: null,
+    gpuApplied: null,
+    msiChanged: [],
+    usbSuspendStash: null
   }
 })
 
