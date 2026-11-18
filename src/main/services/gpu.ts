@@ -1,4 +1,5 @@
 import { app } from 'electron'
+import { execFile } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -201,13 +202,16 @@ export function parseSmi(line: string): GpuMetrics | null {
   }
 }
 
-export async function gpuMetrics(): Promise<GpuMetrics | null> {
-  if (!existsSync(SMI)) return null
-  const r = await runPs(
-    `& '${SMI}' --query-gpu=name,driver_version,temperature.gpu,utilization.gpu,clocks.gr,clocks.mem,power.draw,power.limit,memory.used,memory.total,fan.speed --format=csv,noheader,nounits`,
-    10_000
-  )
-  return r.code === 0 ? parseSmi(r.stdout.split(/\r?\n/)[0] ?? '') : null
+/** Runs nvidia-smi directly (no PowerShell: it is polled every few seconds, even while gaming). */
+export function gpuMetrics(): Promise<GpuMetrics | null> {
+  if (!existsSync(SMI)) return Promise.resolve(null)
+  const args = [
+    '--query-gpu=name,driver_version,temperature.gpu,utilization.gpu,clocks.gr,clocks.mem,power.draw,power.limit,memory.used,memory.total,fan.speed',
+    '--format=csv,noheader,nounits'
+  ]
+  return new Promise((resolve) => {
+    execFile(SMI, args, { windowsHide: true, timeout: 10_000 }, (err, stdout) => resolve(err ? null : parseSmi(stdout.split(/\r?\n/)[0] ?? '')))
+  })
 }
 
 export async function gpuState(model: string, vendorRaw: string, driver?: string): Promise<GpuState> {

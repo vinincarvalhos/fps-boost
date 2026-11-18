@@ -1,3 +1,4 @@
+import os from 'node:os'
 import type { MemoryInfo, MemoryResult } from '@shared/types'
 import { runPsJson } from './powershell'
 
@@ -21,11 +22,19 @@ public static class FpsMem {
     TokPriv tp; tp.Count = 1; tp.Attr = 2;
     if (LookupPrivilegeValue(null, name, out tp.Luid)) AdjustTokenPrivileges(token, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
   }
-  public static int TrimAll() {
+  // skipDir: processes under this folder (the running game) keep their memory
+  public static int TrimAll(string skipDir) {
     Enable("SeIncreaseQuotaPrivilege");
     int n = 0;
     foreach (var p in Process.GetProcesses()) {
-      try { if (EmptyWorkingSet(p.Handle)) n++; } catch { }
+      try {
+        if (!String.IsNullOrEmpty(skipDir)) {
+          string path = null;
+          try { path = p.MainModule.FileName; } catch { }
+          if (path != null && path.StartsWith(skipDir, StringComparison.OrdinalIgnoreCase)) continue;
+        }
+        if (EmptyWorkingSet(p.Handle)) n++;
+      } catch { }
     }
     return n;
   }
@@ -38,21 +47,28 @@ public static class FpsMem {
 
 const FREE_MB = '[math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1024)'
 
+/** Total and available RAM, read by Node (no PowerShell; the Cleaning page polls this). */
 export async function memoryInfo(): Promise<MemoryInfo> {
-  const r = await runPsJson<{ total: number; free: number }>(
-    '$o = Get-CimInstance Win32_OperatingSystem; [pscustomobject]@{ total = [math]::Round($o.TotalVisibleMemorySize / 1024); free = [math]::Round($o.FreePhysicalMemory / 1024) }'
-  )
-  return { totalMb: r?.total ?? 0, availableMb: r?.free ?? 0 }
+  return { totalMb: Math.round(os.totalmem() / 1024 ** 2), availableMb: Math.round(os.freemem() / 1024 ** 2) }
 }
 
-export async function freeMemory(): Promise<MemoryResult> {
+export interface FreeMemoryOptions {
+  /** Install folder of a running game: its processes are not trimmed. */
+  skipDir?: string
+  /** Also drop the standby list (file cache). Off while gaming: the game would re-read its assets from disk. */
+  purgeStandby?: boolean
+}
+
+export async function freeMemory(opts: FreeMemoryOptions = {}): Promise<MemoryResult> {
+  const skip = (opts.skipDir ?? '').replace(/'/g, "''")
+  const purge = opts.purgeStandby ?? true
   const script = `
 Add-Type -TypeDefinition @'
 ${CSHARP}
 '@
 $before = ${FREE_MB}
-$trimmed = [FpsMem]::TrimAll()
-$purged = [FpsMem]::PurgeStandby()
+$trimmed = [FpsMem]::TrimAll('${skip}')
+$purged = ${purge ? '[FpsMem]::PurgeStandby()' : '$false'}
 Start-Sleep -Milliseconds 400
 $after = ${FREE_MB}
 [pscustomobject]@{ before = $before; after = $after; trimmed = $trimmed; purged = $purged }`

@@ -17,8 +17,8 @@ interface ServiceInfo {
 const ACTIONS: { key: Exclude<keyof GameModePrefs, 'autoActivate' | 'services'>; title: string; text: string }[] = [
   { key: 'powerPlan', title: 'Plano de energia de alto desempenho', text: 'Usa o Desempenho Máximo (se você aplicou esse ajuste) ou o Alto Desempenho. O plano anterior volta ao sair.' },
   { key: 'timerResolution', title: 'Timer do sistema em 0,5 ms', text: 'Agenda o trabalho do jogo com mais precisão, reduzindo variação no tempo de quadro.' },
-  { key: 'freeRam', title: 'Liberar memória RAM', text: 'Esvazia a memória ociosa de outros programas quando o jogo abre.' },
-  { key: 'raisePriority', title: 'Prioridade alta para o jogo', text: 'O processo do jogo recebe CPU antes dos programas em segundo plano.' },
+  { key: 'freeRam', title: 'Liberar memória RAM', text: 'Se a RAM estiver quase cheia quando o jogo abre, esvazia a memória ociosa dos outros programas. O jogo não é mexido.' },
+  { key: 'raisePriority', title: 'Prioridade maior para o jogo', text: 'O jogo fica acima do normal, na frente dos programas em segundo plano, sem tirar CPU do som e do mouse.' },
   { key: 'stopServices', title: 'Pausar serviços em segundo plano', text: 'Os serviços marcados abaixo param enquanto você joga e voltam ao sair.' }
 ]
 

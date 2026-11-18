@@ -2,6 +2,8 @@ import { ipcMain } from 'electron'
 import os from 'node:os'
 import si from 'systeminformation'
 import type { LiveStats, SystemInfo } from '@shared/types'
+import { gameModeState } from '../services/gamemode'
+import { gpuMetrics } from '../services/gpu'
 
 const GB = 1024 ** 3
 let cachedInfo: SystemInfo | null = null
@@ -55,25 +57,40 @@ async function collectInfo(): Promise<SystemInfo> {
 }
 
 let gpuCache: { load: number | null; temp: number | null; at: number } = { load: null, temp: null, at: 0 }
-
 let gpuRefreshing = false
 
 /**
- * si.graphics() shells out to nvidia-smi / WMI and takes ~1.5s, so it refreshes in the
- * background and live readings always return the cached value without waiting.
+ * GPU load/temperature straight from nvidia-smi (one small process, no PowerShell or WMI),
+ * refreshed in the background every 3s; without an NVIDIA GPU it only retries every minute.
  */
 function gpuStats(): { load: number | null; temp: number | null } {
-  if (!gpuRefreshing && Date.now() - gpuCache.at > 2000) {
+  const wait = gpuCache.at && gpuCache.load == null && gpuCache.temp == null ? 60_000 : 3000
+  if (!gpuRefreshing && Date.now() - gpuCache.at > wait) {
     gpuRefreshing = true
-    si.graphics()
-      .then((g) => {
-        const main = g.controllers.find((c) => c.utilizationGpu != null) ?? g.controllers[0]
-        gpuCache = { load: main?.utilizationGpu ?? gpuCache.load, temp: main?.temperatureGpu ?? gpuCache.temp, at: Date.now() }
-      })
+    gpuMetrics()
+      .then((m) => (gpuCache = { load: m?.loadPct ?? null, temp: m?.tempC ?? null, at: Date.now() }))
       .catch(() => (gpuCache = { ...gpuCache, at: Date.now() }))
       .finally(() => (gpuRefreshing = false))
   }
   return gpuCache
+}
+
+let tempCache: { value: number | null; at: number } = { value: null, at: 0 }
+let tempRefreshing = false
+
+/**
+ * CPU temperature comes from a WMI query (a PowerShell process plus WmiPrvSE work), which can
+ * cause hitches in games. So it refreshes at most every 30s and never while Game mode is on.
+ */
+function cpuTemp(): number | null {
+  if (!tempRefreshing && !gameModeState().active && Date.now() - tempCache.at > 30_000) {
+    tempRefreshing = true
+    si.cpuTemperature()
+      .then((t) => (tempCache = { value: t.main && t.main > 0 ? Math.round(t.main) : null, at: Date.now() }))
+      .catch(() => (tempCache = { ...tempCache, at: Date.now() }))
+      .finally(() => (tempRefreshing = false))
+  }
+  return tempCache.value
 }
 
 let diskCache: { value: LiveStats['disk']; at: number } = { value: null, at: 0 }
@@ -95,18 +112,16 @@ async function diskStats(): Promise<LiveStats['disk']> {
 }
 
 async function collectLive(): Promise<LiveStats> {
-  const [load, mem, temp, gpu, disk] = await Promise.all([
-    si.currentLoad(),
-    si.mem(),
-    si.cpuTemperature().catch(() => ({ main: null })),
-    gpuStats(),
-    diskStats()
-  ])
+  // si.currentLoad reads os.cpus() and RAM comes from os: neither starts a process
+  const [load, disk] = await Promise.all([si.currentLoad(), diskStats()])
+  const total = os.totalmem()
+  const used = total - os.freemem()
+  const gpu = gpuStats()
   return {
     cpuLoad: Math.round(load.currentLoad),
-    cpuTemp: temp.main && temp.main > 0 ? Math.round(temp.main) : null,
-    memUsedPct: Math.round((mem.active / mem.total) * 100),
-    memUsedGb: +(mem.active / GB).toFixed(1),
+    cpuTemp: cpuTemp(),
+    memUsedPct: Math.round((used / total) * 100),
+    memUsedGb: +(used / GB).toFixed(1),
     gpuLoad: gpu.load,
     gpuTemp: gpu.temp,
     disk

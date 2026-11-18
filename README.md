@@ -57,7 +57,7 @@ Isso cria um rascunho de release com o instalador e o `latest.yml`; abra o relea
 
 - **Biblioteca**: detecta Steam (todas as bibliotecas), Epic, GOG e Ubisoft Connect; outros jogos entram por "Adicionar jogo". Capas vêm do CDN da Steam (para jogos de outras lojas, o nome é buscado na Steam só para achar a capa).
 - **Ajustes por jogo** (grátis): prioridade alta de CPU (Image File Execution Options), GPU dedicada (UserGpuPreferences) e sem otimizações de tela cheia (AppCompatFlags) para o `.exe` do jogo.
-- **Modo jogo** (Premium): ao detectar um processo dentro da pasta de um jogo da Biblioteca, troca o plano de energia, fixa o timer em 0,5 ms, pausa serviços, libera RAM e sobe a prioridade do jogo. Tudo é desfeito quando o jogo fecha, quando o app sai e, se o app cair, na próxima abertura.
+- **Modo jogo** (Premium): ao detectar um processo dentro da pasta de um jogo da Biblioteca, troca o plano de energia, fixa o timer em 0,5 ms, pausa serviços, libera RAM dos outros programas (só se ela estiver quase cheia) e põe o jogo em prioridade acima do normal. A detecção usa um único processo do PowerShell que fica aberto, em vez de abrir um novo a cada verificação. Tudo é desfeito quando o jogo fecha, quando o app sai e, se o app cair, na próxima abertura.
 
 ## Placa de vídeo, dispositivos, drivers e utilitários
 

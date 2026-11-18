@@ -1,4 +1,5 @@
 import { BrowserWindow } from 'electron'
+import os from 'node:os'
 import { spawn, type ChildProcess } from 'node:child_process'
 import log from 'electron-log/main'
 import type { Game, GameModePrefs, GameModeState } from '@shared/types'
@@ -6,10 +7,14 @@ import { games } from './games/library'
 import { isPremium } from './license'
 import { freeMemory } from './memory'
 import { runPs, runPsJson } from './powershell'
+
+const PS_ARGS = ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-Command']
 import { logActivity, store } from './store'
 
 const HIGH_PERFORMANCE = '8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c'
-const POLL_MS = 5000
+const POLL_SECONDS = 5
+/** Below this share of free RAM, Game mode trims background programs. Above it, trimming only costs CPU. */
+const LOW_RAM = 0.2
 
 /** Services that may be paused while playing. Only ones that are safe to stop and restart. */
 export const PAUSABLE_SERVICES: { name: string; label: string; description: string }[] = [
@@ -33,7 +38,7 @@ export const DEFAULT_PREFS: GameModePrefs = {
 
 let state: GameModeState = { active: false, manual: false, applied: [] }
 let timerProc: ChildProcess | null = null
-let watchTimer: NodeJS.Timeout | null = null
+let licenseTimer: NodeJS.Timeout | null = null
 let missedPolls = 0
 
 function publish(patch: Partial<GameModeState>): GameModeState {
@@ -58,9 +63,59 @@ export function findRunningGame(paths: string[], library: Pick<Game, 'id' | 'nam
   return null
 }
 
-async function runningPaths(): Promise<string[]> {
-  const r = await runPsJson<string | string[]>('Get-Process | ? { $_.Path } | % { $_.Path }', 20_000)
-  return r == null ? [] : Array.isArray(r) ? r : [r]
+// One long-lived PowerShell lists running executables every few seconds. Starting a new
+// powershell.exe per check costs far more CPU than the check itself, and it ran during games.
+const WATCH_SCRIPT = `
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+while ($true) {
+  $p = @(Get-Process | ? { $_.Path } | % { $_.Path } | Sort-Object -Unique)
+  [Console]::Out.WriteLine((ConvertTo-Json -InputObject $p -Compress))
+  [Console]::Out.Flush()
+  Start-Sleep -Seconds ${POLL_SECONDS}
+}`
+
+let watcher: ChildProcess | null = null
+let stopping = false
+
+function startWatcher(): void {
+  if (watcher) return
+  stopping = false
+  const proc = spawn('powershell.exe', [...PS_ARGS, WATCH_SCRIPT], { windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] })
+  watcher = proc
+  let buf = ''
+  proc.stdout?.on('data', (d: Buffer) => {
+    buf += d.toString()
+    let nl: number
+    while ((nl = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, nl).trim()
+      buf = buf.slice(nl + 1)
+      if (!line) continue
+      try {
+        const v = JSON.parse(line) as string[] | string | null
+        onPaths(v == null ? [] : Array.isArray(v) ? v : [v])
+      } catch {
+        /* partial or odd line */
+      }
+    }
+  })
+  proc.on('error', (e) => log.warn('[gamemode] watcher', e))
+  proc.on('exit', () => {
+    if (watcher === proc) watcher = null
+    // restart after a crash, but not when it was stopped on purpose
+    if (!stopping) setTimeout(syncWatcher, 10_000)
+  })
+}
+
+function stopWatcher(): void {
+  stopping = true
+  watcher?.kill()
+  watcher = null
+}
+
+/** Runs the watcher only while automatic activation is on and the license allows it. */
+function syncWatcher(): void {
+  if (gameModePrefs().autoActivate && isPremium()) startWatcher()
+  else stopWatcher()
 }
 
 // ---------- timer resolution helper ----------
@@ -127,18 +182,20 @@ export async function activate(game: { id: string; name: string } | null, manual
     applied.push('Timer do sistema em 0,5 ms')
   }
 
-  if (prefs.freeRam) {
-    const r = await freeMemory()
+  const gameDir = game ? games().find((x) => x.id === game.id)?.installDir?.replace(/[\\/]+$/, '') : undefined
+
+  // Trimming every program's memory makes them fault it back in (CPU spikes, hitches), so it only
+  // happens when RAM is actually short, never touches the game and keeps the file cache.
+  if (prefs.freeRam && os.freemem() / os.totalmem() < LOW_RAM) {
+    const r = await freeMemory({ skipDir: gameDir ? gameDir + '\\' : undefined, purgeStandby: false })
     if (r.ok) applied.push(`${Math.round(r.freedMb)} MB de RAM liberados`)
   }
 
-  if (prefs.raisePriority && game) {
-    const g = games().find((x) => x.id === game.id)
-    if (g?.installDir) {
-      const dir = g.installDir.replace(/'/g, "''").replace(/[\\/]+$/, '') + '\\'
-      const r = await runPs(`Get-Process | ? { $_.Path -and $_.Path.StartsWith('${dir}', 'OrdinalIgnoreCase') } | % { try { $_.PriorityClass = 'High' } catch {} }`)
-      if (r.code === 0) applied.push('Prioridade alta para o jogo')
-    }
+  // AboveNormal, not High: High starves audio, input and the game's own helper threads (stutter).
+  if (prefs.raisePriority && gameDir) {
+    const dir = gameDir.replace(/'/g, "''") + '\\'
+    const r = await runPs(`Get-Process | ? { $_.Path -and $_.Path.StartsWith('${dir}', 'OrdinalIgnoreCase') } | % { try { $_.PriorityClass = 'AboveNormal' } catch {} }`)
+    if (r.code === 0) applied.push('Prioridade acima do normal para o jogo')
   }
 
   logActivity({ kind: 'gamemode', title: game ? `Modo jogo: ${game.name}` : 'Modo jogo ativado' })
@@ -164,19 +221,25 @@ export async function deactivate(): Promise<GameModeState> {
 
 // ---------- watcher ----------
 
-async function poll(): Promise<void> {
+let handling = false
+
+async function onPaths(paths: string[]): Promise<void> {
+  if (handling) return // an activation is still running; the next reading comes in a few seconds
+  handling = true
   try {
     if (!gameModePrefs().autoActivate || !isPremium()) return
-    const running = findRunningGame(await runningPaths(), games())
+    const running = findRunningGame(paths, games())
     if (running && !state.active) {
       log.info('[gamemode] jogo detectado', running.name)
       await activate(running, false)
     } else if (!running && state.active && !state.manual) {
-      // two quiet polls in a row, so a launcher restarting the game doesn't flip it off
+      // two quiet readings in a row, so a launcher restarting the game doesn't flip it off
       if (++missedPolls >= 2) await deactivate()
     } else missedPolls = 0
   } catch (err) {
     log.warn('[gamemode] poll', err)
+  } finally {
+    handling = false
   }
 }
 
@@ -184,16 +247,20 @@ export function setPrefs(patch: Partial<GameModePrefs>): GameModePrefs {
   const next = { ...gameModePrefs(), ...patch }
   next.services = next.services.filter((s) => PAUSABLE_SERVICES.some((p) => p.name === s))
   store.set('gameModePrefs', next)
+  syncWatcher()
   return next
 }
 
 export async function initGameMode(): Promise<void> {
   await restoreSaved() // undo a session interrupted by a crash or forced close
-  watchTimer = setInterval(poll, POLL_MS)
+  syncWatcher()
+  // the license can change while the app is open (activation, expiry)
+  licenseTimer = setInterval(syncWatcher, 60_000)
 }
 
 export async function shutdownGameMode(): Promise<void> {
-  if (watchTimer) clearInterval(watchTimer)
+  if (licenseTimer) clearInterval(licenseTimer)
+  stopWatcher()
   await deactivate()
   releaseTimer()
 }

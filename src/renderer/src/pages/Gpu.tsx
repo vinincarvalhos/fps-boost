@@ -31,6 +31,10 @@ function Metrics({ state }: { state: GpuState }) {
     if (!state.metricsAvailable) return
     let alive = true
     const tick = async () => {
+      if (document.hidden) {
+        if (alive) setTimeout(tick, 2000)
+        return
+      }
       const r = await window.fps.invoke<GpuMetrics | null>('gpu:metrics')
       if (alive) {
         setM(r)

@@ -25,6 +25,11 @@ export function startLivePolling(intervalMs = 1500): void {
   started = true
   window.fps.invoke<SystemInfo>('system:info').then((info) => useLive.setState({ info }))
   const tick = async () => {
+    // nobody is looking (minimized, in the tray or behind a game): no readings at all
+    if (document.hidden) {
+      document.addEventListener('visibilitychange', tick, { once: true })
+      return
+    }
     try {
       const s = await window.fps.invoke<LiveStats>('system:live')
       useLive.setState((st) => ({
