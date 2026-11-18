@@ -22,8 +22,8 @@ const FILTERS: { id: Filter; label: string }[] = [
 ]
 
 const HW = {
-  cpu: { label: 'CPU', color: '#3B82F6' },
-  gpu: { label: 'GPU', color: '#A855F7' }
+  cpu: { label: 'CPU', color: '#0066cc' },
+  gpu: { label: 'GPU', color: '#af52de' }
 } as const
 
 function TweakRow({ tweak, on, busy, onToggle }: { tweak: TweakMeta; on: boolean; busy: boolean; onToggle: () => void }) {
@@ -36,9 +36,9 @@ function TweakRow({ tweak, on, busy, onToggle }: { tweak: TweakMeta; on: boolean
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-1.5">
             <h3 className="mr-1 font-medium">{tweak.title}</h3>
-            {tweak.recommended && <span className="tag text-primary">Recomendado</span>}
+            {tweak.recommended && <span className="tag text-ink">Recomendado</span>}
             {isPremiumTweak(tweak) && (
-              <span className="tag bg-gradient-to-r from-primary/25 to-violet/25 text-[#c4b5fd]">
+              <span className="tag bg-ink text-card">
                 <Crown size={11} /> Premium
               </span>
             )}
@@ -167,7 +167,7 @@ export function Tweaks() {
               aria-current={category === c.id ? 'true' : undefined}
               onClick={() => setCategory(c.id)}
               className={`flex h-9 w-full items-center justify-between rounded-[10px] px-3 text-left ${
-                category === c.id ? 'bg-gradient-to-r from-primary to-[#4f6ef7] font-medium text-white [&_span]:text-white/80' : 'text-muted hover:bg-card-2/60 hover:text-ink'
+                category === c.id ? 'bg-card-2 font-semibold text-ink' : 'text-ink/80 hover:bg-card-2/60'
               }`}
             >
               {c.id === 'all' ? 'Todas' : c.id}
@@ -221,7 +221,7 @@ export function Tweaks() {
             sortCategories([...new Set(visible.map(categoryOf))]).map((cat) => (
               <section key={cat} aria-label={cat}>
                 {category === 'all' && (
-                  <h2 className="border-b border-line bg-bg/50 px-4 py-1.5 text-[13px] font-medium text-muted">{cat}</h2>
+                  <h2 className="border-b border-line bg-bg px-4 py-1.5 text-[13px] font-medium text-muted">{cat}</h2>
                 )}
                 <ul className="border-b border-line last:border-b-0 [&>li:last-child]:border-b-0">
                   {visible

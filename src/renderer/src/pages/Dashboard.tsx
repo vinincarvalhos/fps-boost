@@ -3,15 +3,14 @@ import { Link } from 'react-router-dom'
 import { ArrowDown, ArrowUp, Check, ChevronRight, Crown, Minus } from 'lucide-react'
 import type { ActivityEntry, TweakMeta } from '@shared/types'
 import { ConfirmTweak } from '../components/ConfirmTweak'
-import { PageHeader } from '../components/PageHeader'
 import { AreaChart, Donut, Sparkline } from '../components/Sparkline'
 import { useLive } from '../lib/live'
+import { CATEGORY_COLORS as CAT_COLORS, CHANNEL } from '../lib/palette'
 import { useAccount, usePremium } from '../lib/account'
 import { isPremiumTweak } from '@shared/types'
 import { categoryOf, needsConfirm, sortCategories, useTweaks } from '../lib/tweaks'
 
-const C = { cpu: '#3B82F6', gpu: '#A855F7', ram: '#F59E0B', disk: '#22D3EE' }
-const CAT_COLORS = ['#3B82F6', '#A855F7', '#22D3EE', '#F59E0B', '#22C55E', '#EC4899']
+const C = CHANNEL
 
 const avg = (a: number[]) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0)
 
@@ -35,11 +34,11 @@ function Trend({ values }: { values: number[] }) {
 function Kpi({ label, color, value, unit = '%', foot, children }: { label: string; color: string; value: number | null; unit?: string; foot: ReactNode; children: ReactNode }) {
   return (
     <section aria-label={label} className="card flex min-w-0 flex-col gap-2 overflow-hidden p-4 pb-0">
-      <h2 className="flex items-center gap-2 text-[13.5px] font-medium text-muted">
-        <span aria-hidden className="size-2 rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
+      <h2 className="flex items-center gap-2 text-[14px] font-semibold">
+        <span aria-hidden className="size-2 rounded-full" style={{ background: color }} />
         {label}
       </h2>
-      <p className="num text-[30px] font-bold">
+      <p className="num text-[34px] font-semibold">
         {value ?? '—'}
         {value != null && <span className="ml-0.5 text-[17px] font-semibold text-muted">{unit}</span>}
       </p>
@@ -50,12 +49,12 @@ function Kpi({ label, color, value, unit = '%', foot, children }: { label: strin
 }
 
 const ACTIVITY = {
-  applied: { letter: 'A', bg: 'bg-primary', text: 'Aplicado' },
-  reverted: { letter: 'R', bg: 'bg-ram', text: 'Revertido' },
-  'restore-point': { letter: 'P', bg: 'bg-up', text: 'Ponto de restauração' },
-  cleaned: { letter: 'L', bg: 'bg-disk', text: 'Limpeza' },
-  'apps-removed': { letter: 'W', bg: 'bg-gpu', text: 'Apps do Windows' },
-  gamemode: { letter: 'J', bg: 'bg-violet', text: 'Modo jogo' }
+  applied: { letter: 'A', text: 'Ajuste aplicado' },
+  reverted: { letter: 'R', text: 'Ajuste revertido' },
+  'restore-point': { letter: 'P', text: 'Ponto de restauração' },
+  cleaned: { letter: 'L', text: 'Limpeza' },
+  'apps-removed': { letter: 'W', text: 'Apps do Windows' },
+  gamemode: { letter: 'J', text: 'Modo jogo' }
 } as const
 
 function ago(iso: string): string {
@@ -107,13 +106,29 @@ export function Dashboard() {
 
   return (
     <>
-      <PageHeader title="Visão geral" lead={info ? `${info.os.distro.replace('Microsoft ', '')}, build ${info.os.build}` : 'Lendo informações do sistema…'}>
-        <span className="inline-flex h-9 items-center rounded-[10px] border border-line bg-card/70 px-3 text-[13px] text-muted">Atualiza a cada 1,5 s</span>
-        <button className="btn btn-primary" disabled={loading || safeRec.length === 0 || busy.size > 0} onClick={optimize}>
-          {!premium && <Crown size={15} />}
-          Otimizar agora{safeRec.length ? ` (${safeRec.length})` : ''}
-        </button>
-      </PageHeader>
+      {/* dark tile hero: the color change is the divider */}
+      <section aria-labelledby="hero" className="tile-dark mb-6 flex flex-wrap items-end justify-between gap-6 px-10 py-10">
+        <div className="min-w-0">
+          <h1 id="hero" className="text-[40px] font-semibold leading-[1.1]">{info ? `Olá, ${info.os.user}.` : 'Olá.'}</h1>
+          <p className="mt-2 text-[21px] font-semibold leading-[1.19] text-muted-on-dark">
+            {loading
+              ? 'Verificando o Windows…'
+              : pendingRec.length
+                ? `${pendingRec.length} ajustes recomendados ainda desligados.`
+                : 'Tudo o que recomendamos já está ligado.'}
+          </p>
+          <p className="mt-1 text-[14px] text-muted-on-dark">{info ? `${info.os.distro.replace('Microsoft ', '')}, build ${info.os.build}` : ''}</p>
+        </div>
+        <div className="flex gap-3">
+          <Link to="/tweaks" className="btn btn-ghost">
+            Ver ajustes
+          </Link>
+          <button className="btn btn-primary" disabled={loading || safeRec.length === 0 || busy.size > 0} onClick={optimize}>
+            {!premium && <Crown size={15} />}
+            Otimizar agora{safeRec.length ? ` (${safeRec.length})` : ''}
+          </button>
+        </div>
+      </section>
 
       {/* KPI row */}
       <div className="mb-4 grid grid-cols-2 gap-4 xl:grid-cols-4">
@@ -134,7 +149,7 @@ export function Dashboard() {
         >
           <div className="flex h-[46px] items-center px-4">
             <div className="h-2 w-full overflow-hidden rounded-full bg-line">
-              <div className="h-full rounded-full" style={{ width: `${current?.disk?.usedPct ?? 0}%`, background: `linear-gradient(90deg, ${C.disk}, #3B82F6)` }} />
+              <div className="h-full rounded-full" style={{ width: `${current?.disk?.usedPct ?? 0}%`, background: C.disk }} />
             </div>
           </div>
         </Kpi>
@@ -185,7 +200,7 @@ export function Dashboard() {
             <div className="flex flex-col items-center gap-4">
               <Donut size={136} segments={cats.map((c) => ({ value: c.on, color: c.color }))}>
                 <div>
-                  <p className="num text-[26px] font-bold">
+                  <p className="num text-[28px] font-semibold">
                     {onCount}
                     <span className="text-[16px] text-muted">/{list.length}</span>
                   </p>
@@ -224,7 +239,7 @@ export function Dashboard() {
                 const a = ACTIVITY[h.kind]
                 return (
                   <li key={h.at + i} className="flex items-center gap-3 rounded-[10px] px-1 py-1.5">
-                    <span className={`grid size-7 shrink-0 place-items-center rounded-[8px] text-[12px] font-bold text-white ${a.bg}`}>{a.letter}</span>
+                    <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card-2 text-[12px] font-semibold text-ink">{a.letter}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate">{h.title}</p>
                       <p className="text-[12px] text-muted">{a.text}</p>
@@ -258,7 +273,7 @@ export function Dashboard() {
                   <button
                     onClick={() => toggle(t)}
                     disabled={busy.has(t.id)}
-                    className="group flex w-full items-center gap-3 rounded-[10px] border border-line bg-bg/40 px-3 py-2 text-left hover:border-primary/60 disabled:cursor-wait"
+                    className="group flex w-full items-center gap-3 rounded-full border border-line bg-card px-3.5 py-2 text-left hover:border-primary disabled:cursor-wait"
                   >
                     <span className={`grid size-5 shrink-0 place-items-center rounded-[6px] border-2 ${busy.has(t.id) ? 'animate-pulse border-primary' : 'border-muted/60 group-hover:border-primary'}`}>
                       <Check size={12} strokeWidth={3} className="text-primary opacity-0 group-hover:opacity-100" />

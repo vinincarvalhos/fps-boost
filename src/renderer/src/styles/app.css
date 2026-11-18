@@ -1,27 +1,97 @@
 @import '@fontsource-variable/inter/index.css';
-@import '@fontsource-variable/plus-jakarta-sans/index.css';
 @import 'tailwindcss';
 
-/* Tokens — see docs/design.md (navy SaaS dashboard) */
+/*
+ * Tokens follow DESIGN.md (Apple-inspired): light canvases, one Action Blue for everything
+ * interactive, no decorative gradients, no shadows on UI, pills for actions.
+ * App adaptations are documented at the end of DESIGN.md.
+ */
 @theme {
-  --color-bg: #0a0f24;
-  --color-bg-2: #0e1530;
-  --color-card: #131b3a;
-  --color-card-2: #18224a;
-  --color-line: #222d58;
-  --color-ink: #e8ecf8;
-  --color-muted: #8a94b8;
-  --color-primary: #3b82f6;
-  --color-violet: #8b5cf6;
-  --color-cpu: #3b82f6;
-  --color-gpu: #a855f7;
-  --color-ram: #f59e0b;
-  --color-disk: #22d3ee;
-  --color-up: #22c55e;
-  --color-danger: #ef4444;
+  /* surfaces */
+  --color-bg: #f5f5f7; /* parchment: page canvas */
+  --color-bg-2: #ffffff; /* sidebar */
+  --color-card: #ffffff; /* utility cards */
+  --color-card-2: #f5f5f7; /* hover / inset fills on white */
+  --color-pearl: #fafafc;
+  --color-tile: #272729; /* dark tile */
+  --color-tile-2: #2a2a2c;
+  --color-nav: #000000; /* global nav: the only pure black */
+  --color-line: #e0e0e0; /* hairline */
 
-  --font-sans: 'Inter Variable', 'Segoe UI', sans-serif;
-  --font-display: 'Plus Jakarta Sans Variable', 'Inter Variable', sans-serif;
+  /* text */
+  --color-ink: #1d1d1f;
+  --color-muted: #6e6e73;
+  --color-on-dark: #ffffff;
+  --color-muted-on-dark: #cccccc;
+
+  /* the single accent */
+  --color-primary: #0066cc; /* links, icons, focus — text use */
+  --color-action: #0066cc; /* fill of primary buttons, switches, checkboxes */
+  --color-primary-focus: #0071e3;
+  --color-sky: #2997ff; /* links on dark tiles only */
+
+  /* controls */
+  --color-track: #e9e9eb; /* switch off */
+  --color-grid: #e8e8ed; /* chart grid lines and empty donut */
+
+  /* data series (charts and resource dots only — never for actions) */
+  --color-cpu: #0066cc;
+  --color-gpu: #af52de;
+  --color-ram: #c96a00;
+  --color-disk: #0a8fa8;
+  --color-chart-cpu: #0066cc;
+  --color-chart-gpu: #af52de;
+  --color-chart-ram: #ff9f0a;
+  --color-chart-disk: #30b0c7;
+
+  /* status */
+  --color-up: #1d8a3a;
+  --color-danger: #d70015;
+
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* the weight ladder is 300 / 400 / 600 / 700 — 500 is deliberately absent */
+  --font-weight-medium: 600;
+}
+
+/*
+ * Night mode: the same system on dark surfaces. Pure black canvas, raised greys for cards,
+ * Sky Link Blue for in-copy links and icons (DESIGN.md's on-dark variant), buttons keep a
+ * deep Action Blue fill so white labels stay readable.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #000000;
+  --color-bg-2: #161617;
+  --color-card: #1c1c1e;
+  --color-card-2: #2c2c2e;
+  --color-pearl: #2c2c2e;
+  --color-tile: #2a2a2c;
+  --color-tile-2: #2c2c2e;
+  --color-line: #38383a;
+
+  --color-ink: #f5f5f7;
+  --color-muted: #a1a1a6;
+
+  --color-primary: #2997ff;
+  --color-action: #0071e3;
+  --color-primary-focus: #2997ff;
+
+  --color-track: #39393d;
+  --color-grid: #2c2c2e;
+
+  --color-cpu: #2997ff;
+  --color-gpu: #bf5af2;
+  --color-ram: #ff9f0a;
+  --color-disk: #40c8e0;
+  --color-chart-cpu: #2997ff;
+  --color-chart-gpu: #bf5af2;
+  --color-chart-ram: #ff9f0a;
+  --color-chart-disk: #40c8e0;
+
+  --color-up: #30d158;
+  --color-danger: #ff453a;
 }
 
 @layer base {
@@ -30,26 +100,29 @@
   #root {
     height: 100%;
   }
+  :root {
+    color-scheme: light;
+  }
   body {
     margin: 0;
+    background: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: 15px;
+    line-height: 1.47;
+    letter-spacing: -0.01em;
+    font-feature-settings: 'ss03';
     -webkit-font-smoothing: antialiased;
     user-select: none;
-    background:
-      radial-gradient(1200px 600px at 85% -10%, rgb(59 130 246 / 0.18), transparent 60%),
-      radial-gradient(900px 500px at 10% 110%, rgb(139 92 246 / 0.12), transparent 60%),
-      var(--color-bg);
   }
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
+    letter-spacing: -0.022em; /* the "tight" headline cadence */
   }
   :focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-primary-focus);
     outline-offset: 2px;
   }
   ::-webkit-scrollbar {
@@ -67,114 +140,134 @@
   .num {
     font-family: var(--font-display);
     font-variant-numeric: tabular-nums;
-    line-height: 1.05;
+    letter-spacing: -0.02em;
+    line-height: 1.07;
   }
 
-  /* Glassy card with a faint top highlight, as in the reference */
+  /* store-utility-card: white, hairline, 18px, no shadow */
   .card {
     position: relative;
-    background: linear-gradient(180deg, rgb(24 34 74 / 0.85), rgb(19 27 58 / 0.85));
+    background: var(--color-card);
     border: 1px solid var(--color-line);
-    border-radius: 14px;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.04),
-      0 10px 30px -12px rgb(0 0 0 / 0.6);
+    border-radius: 18px;
+  }
+  /* product-tile-dark used as an in-app emphasis block */
+  .tile-dark {
+    background: var(--color-tile);
+    color: var(--color-on-dark);
+    border-radius: 18px;
   }
   .card-title {
     font-family: var(--font-display);
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 600;
+    letter-spacing: -0.022em;
   }
 
+  /* buttons: pills for actions, scale(0.95) when pressed */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.45rem;
+    gap: 0.4rem;
     height: 36px;
-    padding: 0 1rem;
-    border-radius: 10px;
-    font-weight: 600;
+    padding: 0 18px;
+    border-radius: 9999px;
+    font-weight: 400;
     white-space: nowrap;
-    transition: filter 120ms, background-color 120ms, border-color 120ms;
+    transition: transform 100ms, background-color 120ms, color 120ms;
     cursor: pointer;
   }
+  .btn:not(:disabled):active {
+    transform: scale(0.95);
+  }
   .btn:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
     cursor: not-allowed;
   }
   .btn-primary {
-    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    background: var(--color-action);
     color: #fff;
-    box-shadow: 0 6px 18px -6px rgb(59 130 246 / 0.7);
   }
   .btn-primary:not(:disabled):hover {
-    filter: brightness(1.12);
+    filter: brightness(1.1);
   }
+  /* button-secondary-pill: ghost pill in Action Blue */
   .btn-ghost {
-    background: rgb(255 255 255 / 0.03);
-    border: 1px solid var(--color-line);
-    color: var(--color-ink);
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
   }
   .btn-ghost:not(:disabled):hover {
-    background: var(--color-card-2);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
   }
   .btn-danger {
-    border: 1px solid rgb(239 68 68 / 0.5);
-    color: #f87171;
+    background: transparent;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
   }
   .btn-danger:not(:disabled):hover {
-    background: var(--color-danger);
-    color: #fff;
+    background: rgb(215 0 21 / 0.06);
   }
   .btn-sm {
     height: 30px;
-    padding: 0 0.75rem;
+    padding: 0 14px;
     font-size: 13px;
-    border-radius: 8px;
+  }
+  /* on dark tiles the ghost pill turns white */
+  .tile-dark .btn-ghost {
+    border-color: rgb(255 255 255 / 0.6);
+    color: #fff;
+  }
+  .tile-dark .btn-ghost:not(:disabled):hover {
+    background: rgb(255 255 255 / 0.1);
   }
 
+  /* search-input grammar: pill */
   .field {
-    height: 38px;
-    background: rgb(10 15 36 / 0.6);
-    border: 1px solid var(--color-line);
-    border-radius: 10px;
-    padding: 0 0.85rem;
+    height: 36px;
+    background: var(--color-card);
+    border: 1px solid rgb(0 0 0 / 0.1);
+    border-radius: 9999px;
+    padding: 0 16px;
     color: var(--color-ink);
   }
   .field::placeholder {
     color: var(--color-muted);
+  }
+  select.field {
+    border-radius: 8px;
   }
 
   .tag {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    height: 21px;
-    padding: 0 0.5rem;
-    border-radius: 999px;
+    height: 22px;
+    padding: 0 0.55rem;
+    border-radius: 9999px;
     font-size: 12px;
-    font-weight: 500;
-    background: rgb(255 255 255 / 0.05);
+    font-weight: 400;
+    background: var(--color-card-2);
     color: var(--color-muted);
   }
 
   .prose-ui p {
-    margin: 0 0 0.65em;
+    margin: 0 0 0.7em;
   }
   .prose-ui ul {
     list-style: disc;
     padding-left: 1.2em;
-    margin: 0 0 0.65em;
+    margin: 0 0 0.7em;
   }
   .prose-ui strong {
     color: var(--color-ink);
     font-weight: 600;
   }
   .prose-ui code {
-    background: var(--color-bg);
+    background: var(--color-card-2);
     padding: 0 0.3em;
-    border-radius: 4px;
+    border-radius: 5px;
     font-size: 0.92em;
   }
 }

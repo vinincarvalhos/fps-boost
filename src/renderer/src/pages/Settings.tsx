@@ -4,6 +4,36 @@ import { PageHeader } from '../components/PageHeader'
 import { Toggle } from '../components/Toggle'
 import { toast } from '../lib/toast'
 import { UpdatesCard } from '../components/UpdatesCard'
+import { useTheme } from '../lib/theme'
+import type { ThemePref } from '@shared/types'
+
+const THEMES: { id: ThemePref; label: string }[] = [
+  { id: 'system', label: 'Automático' },
+  { id: 'light', label: 'Claro' },
+  { id: 'dark', label: 'Noturno' }
+]
+
+/** Segmented control in the configurator-chip grammar: the choice gets a 2px focus-blue ring. */
+function ThemePicker() {
+  const { pref, set } = useTheme()
+  return (
+    <div role="radiogroup" aria-label="Aparência" className="flex gap-1.5">
+      {THEMES.map((t) => (
+        <button
+          key={t.id}
+          role="radio"
+          aria-checked={pref === t.id}
+          onClick={() => set(t.id)}
+          className={`h-[30px] rounded-full px-3.5 text-[13px] active:scale-95 ${
+            pref === t.id ? 'border-2 border-primary-focus bg-card font-semibold' : 'border border-line bg-card hover:border-muted'
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  )
+}
 
 const OPTIONS: { key: keyof SettingsT; title: string; text: string }[] = [
   { key: 'autostart', title: 'Abrir com o Windows', text: 'O FpsBoost inicia minimizado quando você entra no Windows.' },
@@ -50,6 +80,7 @@ export function Settings() {
             Geral
           </h2>
           <ul>
+            <Row title="Aparência" text="Automático segue o modo claro ou escuro do Windows." control={<ThemePicker />} />
             {OPTIONS.map((o) => (
               <Row
                 key={o.key}

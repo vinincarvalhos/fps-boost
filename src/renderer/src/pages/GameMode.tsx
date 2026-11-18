@@ -68,8 +68,8 @@ export function GameMode() {
       <PageHeader title="Modo jogo" lead="Um perfil de desempenho que liga sozinho quando um jogo da sua Biblioteca abre, e desfaz tudo quando ele fecha." />
 
       {!premium && (
-        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[12px] border border-violet/40 bg-gradient-to-r from-primary/15 to-violet/15 px-4 py-3">
-          <Crown size={18} className="shrink-0 text-[#c4b5fd]" />
+        <div className="mb-5 flex flex-wrap items-center gap-3 rounded-[18px] border border-line bg-card px-5 py-3.5">
+          <Crown size={18} className="shrink-0 text-ink" />
           <p className="flex-1">O Modo jogo faz parte do plano Premium. Você pode configurar tudo agora e ativar quando tiver uma chave.</p>
           <Link to="/license" className="btn btn-primary btn-sm">
             Ativar chave
@@ -79,21 +79,21 @@ export function GameMode() {
 
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {/* status */}
-        <section aria-labelledby="status" className="card overflow-hidden">
-          <div className={`relative p-6 ${active ? 'bg-gradient-to-br from-primary/30 via-violet/20 to-transparent' : ''}`}>
+        <section aria-labelledby="status" className={`overflow-hidden ${active ? 'tile-dark' : 'card'}`}>
+          <div className="relative p-7">
             <div className="flex flex-wrap items-center gap-4">
               <span
                 className={`grid size-14 shrink-0 place-items-center rounded-[16px] ${
-                  active ? 'bg-gradient-to-br from-[#38bdf8] via-primary to-violet text-white shadow-[0_8px_30px_-6px_rgb(99_102_241_/0.9)]' : 'bg-card-2 text-muted'
+                  active ? 'bg-white text-[#1d1d1f]' : 'bg-card-2 text-ink'
                 }`}
               >
                 <Gamepad2 size={26} />
               </span>
               <div className="min-w-[200px] flex-1">
-                <h2 id="status" className="whitespace-nowrap text-[20px] font-bold">
+                <h2 id="status" className="whitespace-nowrap text-[24px] font-semibold">
                   {active ? 'Modo jogo ativo' : 'Modo jogo desligado'}
                 </h2>
-                <p className="text-muted">
+                <p className={active ? 'text-muted-on-dark' : 'text-muted'}>
                   {active
                     ? `${state?.game ? state.game.name : 'Ativado manualmente'}, ${since(state?.since)}`
                     : prefs?.autoActivate
@@ -111,21 +111,21 @@ export function GameMode() {
               <ul className="mt-5 grid gap-1.5 sm:grid-cols-2">
                 {state.applied.map((a) => (
                   <li key={a} className="flex items-center gap-2 text-[13.5px]">
-                    <CheckCircle2 size={15} className="shrink-0 text-up" /> {a}
+                    <CheckCircle2 size={15} className="shrink-0 text-[#30d158]" /> {a}
                   </li>
                 ))}
               </ul>
             )}
           </div>
 
-          <div className="flex items-center gap-4 border-t border-line px-6 py-4">
-            <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-primary/15 text-primary">
+          <div className={`flex items-center gap-4 border-t px-7 py-4 ${active ? 'border-white/10' : 'border-line'}`}>
+            <span className={`grid size-9 shrink-0 place-items-center rounded-full ${active ? 'bg-white/10 text-white' : 'bg-card-2 text-primary'}`}>
               <Radar size={18} />
             </span>
             <div className="min-w-0 flex-1">
               <p className="font-medium">Ativar automaticamente</p>
-              <p className="text-[13px] text-muted">
-                Verifica a cada 5 segundos se algum jogo da <Link to="/games" className="text-primary hover:underline">Biblioteca</Link> está aberto.
+              <p className={`text-[13px] ${active ? 'text-muted-on-dark' : 'text-muted'}`}>
+                Verifica a cada 5 segundos se algum jogo da <Link to="/games" className={`${active ? 'text-sky' : 'text-primary'} hover:underline`}>Biblioteca</Link> está aberto.
               </p>
             </div>
             <Toggle label="Ativar automaticamente" on={!!prefs?.autoActivate} disabled={!prefs} onToggle={() => save({ autoActivate: !prefs?.autoActivate })} />
@@ -149,7 +149,7 @@ export function GameMode() {
             ))}
           </ul>
           {prefs?.stopServices && (
-            <div className="border-t border-line bg-bg/30 px-5 py-3">
+            <div className="border-t border-line bg-card-2 px-5 py-3.5">
               <p className="mb-2 text-[13px] font-medium text-muted">Serviços pausados</p>
               <ul className="grid gap-2 sm:grid-cols-2">
                 {services.map((s) => (

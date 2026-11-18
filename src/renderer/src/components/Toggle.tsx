@@ -6,9 +6,9 @@ interface Props {
   onToggle: () => void
 }
 
-/** On/off switch. While a script runs, the knob sits mid-track and pulses. */
+/** On/off switch in Action Blue. While a script runs, the knob sits mid-track and pulses. */
 export function Toggle({ on, busy, disabled, label, onToggle }: Props) {
-  const pos = busy ? 'translate-x-[8px]' : on ? 'translate-x-[16px]' : 'translate-x-0'
+  const pos = busy ? 'translate-x-[9px]' : on ? 'translate-x-[18px]' : 'translate-x-0'
   return (
     <button
       role="switch"
@@ -17,13 +17,13 @@ export function Toggle({ on, busy, disabled, label, onToggle }: Props) {
       aria-label={label}
       disabled={disabled || busy}
       onClick={onToggle}
-      className={`relative h-[22px] w-[38px] shrink-0 cursor-pointer rounded-full p-[3px] transition-colors duration-150 disabled:cursor-not-allowed ${
-        on ? 'bg-gradient-to-r from-primary to-violet shadow-[0_0_12px_-2px_rgb(59_130_246_/0.7)]' : 'bg-line hover:bg-[#2c3a6e]'
+      className={`relative h-[26px] w-[44px] shrink-0 cursor-pointer rounded-full p-[3px] transition-colors duration-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${
+        on ? 'bg-action' : 'bg-track'
       } ${busy ? 'cursor-wait' : ''}`}
     >
       <span
         aria-hidden
-        className={`block size-[16px] rounded-full bg-white transition-transform duration-200 ${pos} ${busy ? 'animate-pulse' : ''}`}
+        className={`block size-[20px] rounded-full bg-white ring-1 ring-black/5 transition-transform duration-200 ${pos} ${busy ? 'animate-pulse' : ''}`}
       />
     </button>
   )

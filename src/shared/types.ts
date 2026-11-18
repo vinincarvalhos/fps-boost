@@ -51,10 +51,13 @@ export interface RestorePoint {
   createdAt: string
 }
 
+export type ThemePref = 'system' | 'light' | 'dark'
+
 export interface Settings {
   autostart: boolean
   tray: boolean
   autoRestorePoint: boolean
+  theme: ThemePref
 }
 
 /** Channels the renderer may call with invoke(). Keep in sync with src/main/ipc. */

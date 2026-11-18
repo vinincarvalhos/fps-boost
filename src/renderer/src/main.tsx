@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import './styles/app.css'
+import { followColorScheme } from './lib/theme'
 import { Shell } from './components/Shell'
 import { Dashboard } from './pages/Dashboard'
 import { Tweaks } from './pages/Tweaks'
@@ -14,6 +15,8 @@ import { Games } from './pages/Games'
 import { GameMode } from './pages/GameMode'
 import { ComingSoon } from './pages/ComingSoon'
 import { NAV } from './lib/nav'
+
+followColorScheme() // before the first paint
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

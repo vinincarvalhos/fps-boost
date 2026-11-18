@@ -37,10 +37,10 @@ export function UpdatesCard() {
       <div className="flex flex-wrap items-center gap-4 px-4 py-3.5">
         <div className="min-w-0 flex-1">
           <p className="font-medium">FpsBoost {u.currentVersion}</p>
-          <p className={`text-[13px] ${u.status === 'error' ? 'text-[#f87171]' : 'text-muted'}`}>{describe(u)}</p>
+          <p className={`text-[13px] ${u.status === 'error' ? 'text-danger' : 'text-muted'}`}>{describe(u)}</p>
           {u.status === 'downloading' && (
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-              <div className="h-full rounded-full bg-gradient-to-r from-primary to-violet transition-[width]" style={{ width: `${u.percent ?? 0}%` }} />
+              <div className="h-full rounded-full bg-action transition-[width]" style={{ width: `${u.percent ?? 0}%` }} />
             </div>
           )}
         </div>

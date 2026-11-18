@@ -158,7 +158,7 @@ function WindowsApps() {
                 key={p.id}
                 disabled={busy || !list}
                 onClick={() => applyPreset(p.id)}
-                className="rounded-[10px] border border-line bg-bg/40 px-3.5 py-2.5 text-left hover:border-primary/60 disabled:opacity-50"
+                className="rounded-[10px] border border-line bg-bg px-3.5 py-2.5 text-left hover:border-primary/60 disabled:opacity-50"
               >
                 <p className={`font-semibold ${p.id === 'extreme' ? 'text-ram' : ''}`}>{p.label}</p>
                 <p className="text-[12.5px] text-muted">{p.text}</p>
@@ -486,15 +486,15 @@ export function Apps() {
   return (
     <>
       <PageHeader title="Aplicativos" lead="Remova o que veio de fábrica, desinstale sem deixar sobras e instale o essencial para jogar." />
-      <div role="tablist" aria-label="Seções de aplicativos" className="mb-4 inline-flex rounded-[12px] border border-line bg-card/70 p-1">
+      <div role="tablist" aria-label="Seções de aplicativos" className="mb-5 inline-flex rounded-full border border-line bg-card p-1">
         {TABS.map((t) => (
           <button
             key={t.id}
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setParams({ tab: t.id })}
-            className={`h-9 rounded-[9px] px-4 font-medium ${
-              tab === t.id ? 'bg-gradient-to-r from-primary to-[#4f6ef7] text-white shadow-[0_6px_18px_-6px_rgb(59_130_246_/0.8)]' : 'text-muted hover:text-ink'
+            className={`h-8 rounded-full px-4 text-[14px] ${
+              tab === t.id ? 'bg-ink text-card' : 'text-ink hover:bg-card-2'
             }`}
           >
             {t.label}

@@ -9,7 +9,7 @@ export function Checkbox({ checked, onChange, label, disabled }: { checked: bool
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={`grid size-[18px] shrink-0 place-items-center rounded-[5px] border-2 transition-colors disabled:opacity-40 ${
-        checked ? 'border-primary bg-primary' : 'border-muted/60 hover:border-primary'
+        checked ? 'border-action bg-action' : 'border-muted/60 hover:border-primary'
       }`}
     >
       {checked && <Check size={12} strokeWidth={3.5} className="text-white" />}

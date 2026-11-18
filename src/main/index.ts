@@ -12,6 +12,7 @@ import { initGameMode, shutdownGameMode } from './services/gamemode'
 import { initLicense } from './services/license'
 import { initUpdater } from './services/updater'
 import { store } from './services/store'
+import { applyTheme, windowBackground } from './services/theme'
 import { initTray, isTrayEnabled, setTrayEnabled } from './tray'
 
 // Dev only: lets tools capture screenshots over the DevTools protocol.
@@ -32,7 +33,7 @@ function createWindow(): void {
     minHeight: 640,
     frame: false,
     show: false,
-    backgroundColor: '#1A2029',
+    backgroundColor: windowBackground(),
     title: 'FpsBoost',
     icon: join(app.getAppPath(), 'build', 'icon.png'),
     webPreferences: {
@@ -80,6 +81,7 @@ if (!app.requestSingleInstanceLock()) {
     ipcMain.on('window:maximize', () => (win?.isMaximized() ? win.unmaximize() : win?.maximize()))
     ipcMain.on('window:close', () => win?.close())
 
+    applyTheme() // before the window exists, so it opens in the right colours
     registerSystemIpc()
     registerTweakIpc()
     registerBackupIpc()

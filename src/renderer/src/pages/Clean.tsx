@@ -130,7 +130,7 @@ function FilesCard() {
             <div className="w-36 shrink-0 text-right">
               <p className="num text-[15px] font-semibold">{bytes(c.bytes)}</p>
               <div className="mt-1 h-1 overflow-hidden rounded-full bg-line">
-                <div className="h-full rounded-full bg-gradient-to-r from-disk to-primary" style={{ width: `${(c.bytes / max) * 100}%` }} />
+                <div className="h-full rounded-full bg-chart-disk" style={{ width: `${(c.bytes / max) * 100}%` }} />
               </div>
               <p className="mt-0.5 text-[11.5px] text-muted">{c.files.toLocaleString('pt-BR')} arquivos</p>
             </div>
@@ -153,7 +153,7 @@ function FilesCard() {
                 <span className="truncate">{f}</span>
                 <button
                   aria-label={`Remover ${f}`}
-                  className="grid size-5 place-items-center rounded-full hover:bg-white/10"
+                  className="grid size-5 place-items-center rounded-full hover:bg-card-2"
                   onClick={async () => {
                     setFolders(await window.fps.invoke<string[]>('clean:folders-remove', f))
                     analyze()
@@ -230,16 +230,16 @@ function MemoryCard() {
   return (
     <section aria-labelledby="ram" className="card p-5">
       <div className="mb-4 flex items-center gap-3">
-        <span className="grid size-9 place-items-center rounded-[10px] bg-ram/15 text-ram">
+        <span className="grid size-9 place-items-center rounded-full bg-card-2 text-ink">
           <MemoryStick size={18} />
         </span>
         <h2 id="ram" className="card-title flex-1">
           Memória RAM
         </h2>
-        <span className="num text-[20px] font-bold">{pct}%</span>
+        <span className="num text-[22px] font-semibold">{pct}%</span>
       </div>
       <div className="h-2.5 overflow-hidden rounded-full bg-line">
-        <div className="h-full rounded-full bg-gradient-to-r from-ram to-[#f97316] transition-[width] duration-500" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full bg-chart-ram transition-[width] duration-500" style={{ width: `${pct}%` }} />
       </div>
       <p className="mt-2 text-[13px] text-muted">{info ? `${mb(used)} em uso, ${mb(info.availableMb)} livres de ${mb(info.totalMb)}` : 'Lendo memória…'}</p>
       <p className="mt-3 text-[13px] text-muted">

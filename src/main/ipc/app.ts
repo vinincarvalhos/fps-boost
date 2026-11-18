@@ -5,6 +5,7 @@ import type { Settings } from '@shared/types'
 import { runPs } from '../services/powershell'
 import { store } from '../services/store'
 import { setTrayEnabled } from '../tray'
+import { applyTheme } from '../services/theme'
 
 function applyAutostart(enabled: boolean): void {
   app.setLoginItemSettings({ openAtLogin: enabled, args: ['--hidden'] })
@@ -18,6 +19,7 @@ export function registerAppIpc(): void {
     store.set('settings', next)
     if ('autostart' in patch) applyAutostart(next.autostart)
     if ('tray' in patch) setTrayEnabled(next.tray)
+    if ('theme' in patch) applyTheme(next.theme)
     return next
   })
 

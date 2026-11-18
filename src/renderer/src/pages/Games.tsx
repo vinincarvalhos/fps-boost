@@ -7,11 +7,11 @@ import { Toggle } from '../components/Toggle'
 import { toast } from '../lib/toast'
 
 const SOURCES: Record<GameSource, { label: string; color: string }> = {
-  steam: { label: 'Steam', color: '#66C0F4' },
-  epic: { label: 'Epic', color: '#E8ECF8' },
-  gog: { label: 'GOG', color: '#B57BF3' },
-  ubisoft: { label: 'Ubisoft', color: '#3B82F6' },
-  manual: { label: 'Adicionado', color: '#8A94B8' }
+  steam: { label: 'Steam', color: 'var(--color-ink)' },
+  epic: { label: 'Epic', color: 'var(--color-muted)' },
+  gog: { label: 'GOG', color: '#af52de' },
+  ubisoft: { label: 'Ubisoft', color: '#0066cc' },
+  manual: { label: 'Adicionado', color: '#c7c7cc' }
 }
 
 const SETTINGS: { key: keyof GameSettings; title: string; text: string }[] = [
@@ -30,8 +30,8 @@ function Cover({ game, className = '' }: { game: Game; className?: string }) {
   const id = game.coverAppId
   if (!id || stage > 1)
     return (
-      <div className={`grid place-items-center bg-gradient-to-br from-card-2 via-[#1d2a5c] to-[#2a1d5c] ${className}`}>
-        <span className="font-[family-name:var(--font-display)] text-[34px] font-bold text-white/70">
+      <div className={`grid place-items-center bg-tile ${className}`}>
+        <span className="text-[34px] font-semibold tracking-[-0.03em] text-white/80">
           {game.name
             .split(/\s+/)
             .slice(0, 2)
@@ -231,7 +231,7 @@ export function Games() {
               aria-checked={source === s}
               onClick={() => setSource(s)}
               className={`h-9 rounded-full border px-3.5 text-[13px] font-medium ${
-                source === s ? 'border-primary bg-primary/15 text-ink' : 'border-line text-muted hover:text-ink'
+                source === s ? 'border-2 border-primary-focus bg-card text-ink' : 'border-line bg-card text-ink hover:border-muted'
               }`}
             >
               {s === 'all' ? `Todos (${total})` : `${SOURCES[s].label} (${counts[s]})`}
@@ -252,27 +252,27 @@ export function Games() {
           </p>
         </div>
       ) : (
-        <ul className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-4">
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-5">
           {visible.map((g) => (
             <li key={g.id}>
+              {/* store-utility-card: image on top, name and details below — no text over the art */}
               <button
                 onClick={() => setOpen(g)}
-                className={`group relative block w-full overflow-hidden rounded-[12px] border border-line text-left shadow-[0_10px_30px_-12px_rgb(0_0_0_/0.7)] transition-transform hover:-translate-y-0.5 hover:border-primary/70 ${
-                  g.hidden ? 'opacity-50' : ''
-                }`}
+                className={`card block w-full p-3 text-left transition-transform active:scale-[0.98] ${g.hidden ? 'opacity-50' : ''}`}
               >
-                <Cover game={g} className="aspect-[2/3] w-full" />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 pb-2.5 pt-10">
-                  <p className="truncate text-[13.5px] font-semibold text-white">{g.name}</p>
-                  <p className="flex items-center gap-1.5 text-[11.5px] text-white/70">
-                    <span className="size-1.5 rounded-full" style={{ background: SOURCES[g.source].color }} />
-                    {SOURCES[g.source].label}
-                    {g.sizeGb ? ` · ${g.sizeGb.toLocaleString('pt-BR')} GB` : ''}
-                  </p>
+                <div className="relative">
+                  <Cover game={g} className="aspect-[2/3] w-full rounded-[8px]" />
+                  {Object.values(g.settings).some(Boolean) && (
+                    <span className="absolute right-2 top-2 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[#1d1d1f]">Otimizado</span>
+                  )}
                 </div>
-                {Object.values(g.settings).some(Boolean) && (
-                  <span className="absolute right-2 top-2 rounded-full bg-primary/90 px-2 py-0.5 text-[10.5px] font-semibold text-white">Otimizado</span>
-                )}
+                <p className="mt-3 truncate text-[15px] font-semibold">{g.name}</p>
+                <p className="flex items-center gap-1.5 text-[13px] text-muted">
+                  <span className="size-1.5 rounded-full" style={{ background: SOURCES[g.source].color }} />
+                  {SOURCES[g.source].label}
+                  {g.sizeGb ? `, ${g.sizeGb.toLocaleString('pt-BR')} GB` : ''}
+                </p>
+                <span className="mt-1 inline-block text-[13px] text-primary">Ver detalhes</span>
               </button>
             </li>
           ))}

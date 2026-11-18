@@ -21,7 +21,7 @@ interface Schema {
 export const store = new Store<Schema>({
   name: 'fpsboost',
   defaults: {
-    settings: { autostart: false, tray: false, autoRestorePoint: true },
+    settings: { autostart: false, tray: false, autoRestorePoint: true, theme: 'system' },
     tweaks: {},
     firstTweakRestorePointDone: false,
     history: [],

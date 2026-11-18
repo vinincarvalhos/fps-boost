@@ -10,11 +10,11 @@ import { toast } from '../lib/toast'
 const date = (iso?: string | null) => (iso ? new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : null)
 
 const STATUS: Record<LicenseState['status'], { label: string; cls: string }> = {
-  none: { label: 'Plano grátis', cls: 'bg-white/5 text-muted' },
+  none: { label: 'Plano grátis', cls: 'bg-card-2 text-muted' },
   active: { label: 'Ativa', cls: 'bg-up/15 text-up' },
   offline: { label: 'Ativa, sem conexão', cls: 'bg-ram/15 text-ram' },
   lapsed: { label: 'Precisa revalidar', cls: 'bg-ram/15 text-ram' },
-  error: { label: 'Recusada', cls: 'bg-danger/15 text-[#f87171]' }
+  error: { label: 'Recusada', cls: 'bg-danger/15 text-danger' }
 }
 
 const FREE = ['Painel em tempo real', 'Ajustes seguros, um a um', 'Pontos de restauração e cópias do registro']
@@ -53,11 +53,11 @@ export function License() {
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <section aria-labelledby="lic" className="card overflow-hidden">
           <div className="flex items-center gap-4 border-b border-line p-5">
-            <span className={`grid size-12 shrink-0 place-items-center rounded-[12px] ${premium ? 'bg-gradient-to-br from-[#38bdf8] via-primary to-violet text-white' : 'bg-card-2 text-muted'}`}>
+            <span className={`grid size-12 shrink-0 place-items-center rounded-[12px] ${premium ? 'bg-ink text-card' : 'bg-card-2 text-ink'}`}>
               <Crown size={22} />
             </span>
             <div className="min-w-0 flex-1">
-              <h2 id="lic" className="text-[20px] font-bold">
+              <h2 id="lic" className="text-[24px] font-semibold">
                 {premium ? 'FpsBoost Premium' : 'FpsBoost Grátis'}
               </h2>
               <p className="text-muted">{license.maskedKey ?? 'Nenhuma chave ativada'}</p>
@@ -66,10 +66,10 @@ export function License() {
           </div>
 
           {license.maskedKey && (
-            <dl className="grid grid-cols-2 gap-px bg-line sm:grid-cols-3 [&>div]:bg-card [&>div]:px-5 [&>div]:py-3.5">
+            <dl className="grid grid-cols-2 gap-px bg-line sm:grid-cols-3 [&>div]:bg-card [&>div]:px-6 [&>div]:py-4">
               <div>
                 <dt className="text-[12px] text-muted">Computadores</dt>
-                <dd className="num mt-0.5 text-[18px] font-bold">
+                <dd className="num mt-0.5 text-[21px] font-semibold">
                   {license.machinesUsed ?? '—'}
                   <span className="text-muted">/{license.maxMachines ?? '—'}</span>
                 </dd>
@@ -146,7 +146,7 @@ export function License() {
               </li>
             ))}
           </ul>
-          <h3 className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-primary">
+          <h3 className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-ink">
             <Crown size={14} /> Premium
           </h3>
           <ul className="flex flex-col gap-1.5">

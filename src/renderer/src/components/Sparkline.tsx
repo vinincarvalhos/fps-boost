@@ -1,4 +1,4 @@
-import { useId } from 'react'
+
 
 const WINDOW = 60 // readings shown; the trace scrolls instead of stretching
 
@@ -10,20 +10,14 @@ function points(values: number[], w: number, h: number, pad = 2): string[] {
 
 /** Small area trace for KPI cards, 0–100 scale. */
 export function Sparkline({ values, color, height = 46 }: { values: number[]; color: string; height?: number }) {
-  const id = useId()
   const W = 200
   if (values.length < 2) return <div style={{ height }} />
   const pts = points(values, W, height)
   const first = pts[0].split(',')[0]
   return (
     <svg viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" className="block w-full" style={{ height }} aria-hidden>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={color} stopOpacity={0.45} />
-          <stop offset="1" stopColor={color} stopOpacity={0} />
-        </linearGradient>
-      </defs>
-      <polygon points={`${first},${height} ${pts.join(' ')} ${W},${height}`} fill={`url(#${id})`} />
+      {/* flat translucent fill: no decorative gradients */}
+      <polygon points={`${first},${height} ${pts.join(' ')} ${W},${height}`} fill={color} fillOpacity={0.1} />
       <polyline points={pts.join(' ')} fill="none" stroke={color} strokeWidth={2} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
     </svg>
   )
@@ -37,7 +31,6 @@ export interface Series {
 
 /** Larger multi-series chart with a % axis and a time axis. */
 export function AreaChart({ series, height = 220 }: { series: Series[]; height?: number }) {
-  const id = useId()
   const W = 600
   const ticks = [100, 75, 50, 25, 0]
   return (
@@ -51,25 +44,17 @@ export function AreaChart({ series, height = 220 }: { series: Series[]; height?:
       </div>
       <div className="min-w-0 flex-1">
         <svg viewBox={`0 0 ${W} ${height - 24}`} preserveAspectRatio="none" className="block w-full" style={{ height: height - 24 }} role="img" aria-label="Uso de CPU, GPU e memória nos últimos 90 segundos">
-          <defs>
-            {series.map((s, i) => (
-              <linearGradient key={s.label} id={`${id}-${i}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor={s.color} stopOpacity={0.3} />
-                <stop offset="1" stopColor={s.color} stopOpacity={0} />
-              </linearGradient>
-            ))}
-          </defs>
           {ticks.map((t) => {
             const y = ((100 - t) / 100) * (height - 24 - 4) + 2
-            return <line key={t} x1={0} x2={W} y1={y} y2={y} stroke="#222D58" strokeDasharray="3 5" vectorEffect="non-scaling-stroke" />
+            return <line key={t} x1={0} x2={W} y1={y} y2={y} style={{ stroke: 'var(--color-grid)' }} strokeDasharray="3 5" vectorEffect="non-scaling-stroke" />
           })}
-          {series.map((s, i) => {
+          {series.map((s) => {
             if (s.values.length < 2) return null
             const pts = points(s.values, W, height - 24)
             const first = pts[0].split(',')[0]
             return (
               <g key={s.label}>
-                <polygon points={`${first},${height - 24} ${pts.join(' ')} ${W},${height - 24}`} fill={`url(#${id}-${i})`} />
+                <polygon points={`${first},${height - 24} ${pts.join(' ')} ${W},${height - 24}`} fill={s.color} fillOpacity={0.06} />
                 <polyline points={pts.join(' ')} fill="none" stroke={s.color} strokeWidth={2.25} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
               </g>
             )
@@ -95,7 +80,7 @@ export function Donut({ segments, size = 150, children }: { segments: { value: n
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg viewBox="0 0 140 140" width={size} height={size} className="-rotate-90" aria-hidden>
-        <circle cx={70} cy={70} r={r} fill="none" stroke="#222D58" strokeWidth={16} />
+        <circle cx={70} cy={70} r={r} fill="none" style={{ stroke: 'var(--color-grid)' }} strokeWidth={16} />
         {total > 0 &&
           segments.map((s, i) => {
             const len = (s.value / total) * c
