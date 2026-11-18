@@ -6,10 +6,12 @@ directories:
 files:
   - out/**/*
   - package.json
+  - build/icon.png
 extraResources:
   - from: resources/tweaks
     to: tweaks
 win:
+  icon: build/icon.ico
   target: nsis
   requestedExecutionLevel: requireAdministrator
 nsis:

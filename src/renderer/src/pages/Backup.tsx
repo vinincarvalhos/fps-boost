@@ -13,11 +13,15 @@ interface RegistryBackup {
 type Result = { ok: boolean; error?: string }
 
 const fmt = (iso: string) =>
-  new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+
+function Empty({ children }: { children: string }) {
+  return <p className="px-4 py-6 text-muted">{children}</p>
+}
 
 export function Backup() {
   const [points, setPoints] = useState<RestorePoint[] | null>(null)
-  const [regs, setRegs] = useState<RegistryBackup[]>([])
+  const [regs, setRegs] = useState<RegistryBackup[] | null>(null)
   const [creating, setCreating] = useState(false)
   const [name, setName] = useState('')
   const [restoring, setRestoring] = useState<RestorePoint | null>(null)
@@ -50,96 +54,109 @@ export function Backup() {
     <>
       <PageHeader
         title="Backup"
-        lead="Um ponto de restauração devolve o Windows inteiro ao estado de um momento. As cópias do registro desfazem um ajuste específico."
+        lead="Um ponto de restauração devolve o Windows inteiro a um momento. Uma cópia do registro desfaz só um ajuste."
       />
 
-      <section aria-labelledby="rp-title" className="mb-14">
-        <h2 id="rp-title" className="type-heading mb-4 text-[26px]">
-          Pontos de restauração
-        </h2>
-        <form
-          className="mb-6 flex flex-wrap gap-3"
-          onSubmit={(e) => {
-            e.preventDefault()
-            create()
-          }}
-        >
-          <label className="sr-only" htmlFor="rp-name">
-            Nome do ponto
-          </label>
-          <input
-            id="rp-name"
-            className="field w-80"
-            placeholder="Nome, por exemplo: antes do driver novo"
-            maxLength={60}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <button className="btn btn-gold" disabled={creating}>
-            {creating ? 'Criando… pode levar um minuto' : 'Criar ponto de restauração'}
-          </button>
-        </form>
-
-        {points == null ? (
-          <p className="text-silk-dim">Lendo pontos de restauração…</p>
-        ) : points.length === 0 ? (
-          <p className="max-w-[60ch] text-silk-dim">
-            Nenhum ponto de restauração neste PC. Crie um agora, antes de aplicar ajustes.
-          </p>
-        ) : (
-          <table className="w-full text-left text-[14px]">
-            <thead className="text-silk-dim">
-              <tr className="border-b border-mask-line">
-                <th className="py-2 font-normal">Nome</th>
-                <th className="py-2 font-normal">Criado em</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {points.map((p) => (
-                <tr key={p.sequence} className="border-b border-mask-line/60">
-                  <td className="py-3">{p.description}</td>
-                  <td className="py-3 text-silk-dim">{fmt(p.createdAt)}</td>
-                  <td className="py-3 text-right">
-                    <button className="btn btn-line py-1.5" onClick={() => setRestoring(p)}>
-                      Restaurar
-                    </button>
-                  </td>
+      <div className="grid items-start gap-4 xl:grid-cols-2">
+        <section aria-labelledby="rp" className="card">
+          <div className="flex items-center justify-between border-b border-line px-4 py-3">
+            <h2 id="rp" className="font-semibold">
+              Pontos de restauração
+            </h2>
+            {points && points.length > 0 && (
+              <button className="btn btn-danger btn-sm" onClick={() => setWiping(true)}>
+                Apagar todos
+              </button>
+            )}
+          </div>
+          <form
+            className="flex gap-2 border-b border-line p-3"
+            onSubmit={(e) => {
+              e.preventDefault()
+              create()
+            }}
+          >
+            <label className="sr-only" htmlFor="rp-name">
+              Nome do ponto
+            </label>
+            <input
+              id="rp-name"
+              className="field min-w-0 flex-1"
+              placeholder="Nome, por exemplo: antes do driver novo"
+              maxLength={60}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <button className="btn btn-primary" disabled={creating}>
+              {creating ? 'Criando…' : 'Criar ponto'}
+            </button>
+          </form>
+          {points == null ? (
+            <Empty>Lendo pontos de restauração…</Empty>
+          ) : points.length === 0 ? (
+            <Empty>Nenhum ponto de restauração neste PC. Crie um antes de aplicar ajustes.</Empty>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-[13px] text-muted">
+                  <th className="px-4 py-2 font-normal">Nome</th>
+                  <th className="px-4 py-2 font-normal">Criado em</th>
+                  <th className="px-4 py-2" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {points && points.length > 0 && (
-          <button className="btn btn-flux mt-6" onClick={() => setWiping(true)}>
-            Apagar todos os pontos
-          </button>
-        )}
-      </section>
+              </thead>
+              <tbody>
+                {points.map((p) => (
+                  <tr key={p.sequence} className="border-t border-line">
+                    <td className="px-4 py-2">{p.description}</td>
+                    <td className="num whitespace-nowrap px-4 py-2 text-[15px] text-muted">{fmt(p.createdAt)}</td>
+                    <td className="px-4 py-2 text-right">
+                      <button className="btn btn-ghost btn-sm" onClick={() => setRestoring(p)}>
+                        Restaurar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
 
-      <section aria-labelledby="reg-title">
-        <h2 id="reg-title" className="type-heading mb-4 text-[26px]">
-          Cópias do registro
-        </h2>
-        {regs.length === 0 ? (
-          <p className="max-w-[60ch] text-silk-dim">
-            Antes de cada ajuste que mexe no registro, as chaves afetadas são copiadas para cá. Ainda não há cópias.
-          </p>
-        ) : (
-          <ul>
-            {regs.map((r) => (
-              <li key={r.file} className="flex items-center gap-4 border-b border-mask-line/60 py-3 text-[14px]">
-                <span className="flex-1">{r.tweakId}</span>
-                <span className="text-silk-dim">{fmt(r.createdAt)}</span>
-                <span className="w-16 text-right text-silk-dim">{r.sizeKb} KB</span>
-                <button className="btn btn-line py-1.5" onClick={() => restoreReg(r)}>
-                  Restaurar
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <section aria-labelledby="reg" className="card">
+          <h2 id="reg" className="border-b border-line px-4 py-3 font-semibold">
+            Cópias do registro
+          </h2>
+          {regs == null ? (
+            <Empty>Lendo cópias…</Empty>
+          ) : regs.length === 0 ? (
+            <Empty>Antes de cada ajuste que mexe no registro, as chaves afetadas são copiadas para cá. Ainda não há cópias.</Empty>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-[13px] text-muted">
+                  <th className="px-4 py-2 font-normal">Ajuste</th>
+                  <th className="px-4 py-2 font-normal">Criada em</th>
+                  <th className="px-4 py-2 text-right font-normal">Tamanho</th>
+                  <th className="px-4 py-2" />
+                </tr>
+              </thead>
+              <tbody>
+                {regs.map((r) => (
+                  <tr key={r.file} className="border-t border-line">
+                    <td className="px-4 py-2">{r.tweakId}</td>
+                    <td className="num whitespace-nowrap px-4 py-2 text-[15px] text-muted">{fmt(r.createdAt)}</td>
+                    <td className="num px-4 py-2 text-right text-[15px] text-muted">{r.sizeKb} KB</td>
+                    <td className="px-4 py-2 text-right">
+                      <button className="btn btn-ghost btn-sm" onClick={() => restoreReg(r)}>
+                        Restaurar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      </div>
 
       {restoring && (
         <Modal
@@ -147,11 +164,11 @@ export function Backup() {
           onClose={() => setRestoring(null)}
           actions={
             <>
-              <button className="btn btn-line" onClick={() => setRestoring(null)}>
+              <button className="btn btn-ghost" onClick={() => setRestoring(null)}>
                 Cancelar
               </button>
               <button
-                className="btn btn-gold"
+                className="btn btn-primary"
                 onClick={async () => {
                   const p = restoring
                   setRestoring(null)
@@ -177,11 +194,11 @@ export function Backup() {
           onClose={() => setWiping(false)}
           actions={
             <>
-              <button className="btn btn-line" onClick={() => setWiping(false)}>
+              <button className="btn btn-ghost" onClick={() => setWiping(false)}>
                 Cancelar
               </button>
               <button
-                className="btn btn-flux"
+                className="btn btn-danger"
                 onClick={async () => {
                   setWiping(false)
                   const res = await window.fps.invoke<Result>('backup:delete-all')
@@ -196,8 +213,8 @@ export function Backup() {
           }
         >
           <p>
-            Isso libera espaço em disco, mas <strong>não tem volta</strong>: você não poderá mais restaurar o Windows para
-            nenhum desses momentos.
+            Isso libera espaço em disco, mas <strong>não tem volta</strong>: você não poderá mais restaurar o Windows para nenhum
+            desses momentos.
           </p>
         </Modal>
       )}

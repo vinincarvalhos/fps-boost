@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import log from 'electron-log/main'
 import type { TweakResult } from '@shared/types'
 import { runPs, runPsFile } from '../services/powershell'
-import { store } from '../services/store'
+import { logActivity, store } from '../services/store'
 import { createRestorePoint } from '../services/restore'
 import { loadTweaks, scriptPath } from '../services/tweaks'
 
@@ -75,6 +75,7 @@ export function registerTweakIpc(): void {
       const res = await runPsFile(file)
       if (res.code !== 0) return { ok: false, output: res.stdout, error: res.stderr || `Código ${res.code}` }
       store.set(`tweaks.${id}`, true)
+      logActivity({ kind: 'applied', title: meta.title })
       return { ok: true, output: res.stdout }
     })
   )
@@ -86,6 +87,7 @@ export function registerTweakIpc(): void {
       const res = await runPsFile(file)
       if (res.code !== 0) return { ok: false, output: res.stdout, error: res.stderr || `Código ${res.code}` }
       store.set(`tweaks.${id}`, false)
+      logActivity({ kind: 'reverted', title: loadTweaks().find((t) => t.id === id)?.title ?? id })
       return { ok: true, output: res.stdout }
     })
   )

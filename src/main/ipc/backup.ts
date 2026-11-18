@@ -3,6 +3,7 @@ import { readdirSync, statSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { runPs } from '../services/powershell'
 import { createRestorePoint, deleteAllRestorePoints, listRestorePoints, restoreTo } from '../services/restore'
+import { logActivity } from '../services/store'
 import { registryBackupDir } from './tweaks'
 
 export interface RegistryBackup {
@@ -14,9 +15,12 @@ export interface RegistryBackup {
 
 export function registerBackupIpc(): void {
   ipcMain.handle('backup:list', () => listRestorePoints())
-  ipcMain.handle('backup:create', (_e, description: string) =>
-    createRestorePoint(typeof description === 'string' && description.trim() ? description : 'FpsBoost')
-  )
+  ipcMain.handle('backup:create', async (_e, description: string) => {
+    const name = typeof description === 'string' && description.trim() ? description : 'FpsBoost'
+    const res = await createRestorePoint(name)
+    if (res.ok) logActivity({ kind: 'restore-point', title: name })
+    return res
+  })
   ipcMain.handle('backup:restore', (_e, sequence: number) => restoreTo(sequence))
   ipcMain.handle('backup:delete-all', () => deleteAllRestorePoints())
 

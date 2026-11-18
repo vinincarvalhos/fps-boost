@@ -1,18 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { Settings as SettingsT } from '@shared/types'
-import { DipSwitch } from '../components/DipSwitch'
 import { PageHeader } from '../components/PageHeader'
+import { Toggle } from '../components/Toggle'
 import { toast } from '../lib/toast'
 
 const OPTIONS: { key: keyof SettingsT; title: string; text: string }[] = [
   { key: 'autostart', title: 'Abrir com o Windows', text: 'O FpsBoost inicia minimizado quando você entra no Windows.' },
   { key: 'tray', title: 'Manter na bandeja', text: 'Fechar a janela deixa o FpsBoost rodando ao lado do relógio.' },
-  {
-    key: 'autoRestorePoint',
-    title: 'Ponto de restauração automático',
-    text: 'Cria um ponto de restauração antes do primeiro ajuste aplicado.'
-  }
+  { key: 'autoRestorePoint', title: 'Ponto de restauração automático', text: 'Cria um ponto de restauração antes do primeiro ajuste aplicado.' }
 ]
+
+function Row({ title, text, control }: { title: string; text: string; control: ReactNode }) {
+  return (
+    <li className="flex items-center gap-4 border-t border-line px-4 py-3 first:border-t-0">
+      <div className="min-w-0 flex-1">
+        <h3 className="font-medium">{title}</h3>
+        <p className="text-[13px] text-muted">{text}</p>
+      </div>
+      {control}
+    </li>
+  )
+}
 
 export function Settings() {
   const [s, setS] = useState<SettingsT | null>(null)
@@ -33,31 +41,59 @@ export function Settings() {
 
   return (
     <>
-      <PageHeader title="Configurações" lead={version ? `FpsBoost ${version}` : undefined} />
+      <PageHeader title="Configurações" lead={version ? `FpsBoost versão ${version}` : undefined} />
 
-      <ul className="mb-14 max-w-[720px]">
-        {OPTIONS.map((o) => (
-          <li key={o.key} className="flex items-start gap-5 border-b border-mask-line/70 py-4">
-            <DipSwitch label={o.title} on={!!s?.[o.key]} disabled={!s} onToggle={() => set({ [o.key]: !s?.[o.key] })} />
-            <div>
-              <h3 className="font-semibold">{o.title}</h3>
-              <p className="text-[14px] text-silk-dim">{o.text}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="grid max-w-[880px] gap-4">
+        <section aria-labelledby="general" className="card">
+          <h2 id="general" className="border-b border-line px-4 py-3 font-semibold">
+            Geral
+          </h2>
+          <ul>
+            {OPTIONS.map((o) => (
+              <Row
+                key={o.key}
+                title={o.title}
+                text={o.text}
+                control={<Toggle label={o.title} on={!!s?.[o.key]} disabled={!s} onToggle={() => set({ [o.key]: !s?.[o.key] })} />}
+              />
+            ))}
+          </ul>
+        </section>
 
-      <h2 className="type-heading mb-4 text-[26px]">Ferramentas</h2>
-      <div className="flex flex-wrap gap-3">
-        <button className="btn btn-line" onClick={() => window.fps.invoke('app:open-logs')}>
-          Abrir pasta de registros
-        </button>
-        <button className="btn btn-line" onClick={() => action('app:restart-explorer', 'Explorador reiniciado')}>
-          Reiniciar o Explorador
-        </button>
-        <button className="btn btn-line" onClick={() => action('app:reboot-firmware', 'Reiniciando na BIOS em 5 segundos')}>
-          Reiniciar na BIOS
-        </button>
+        <section aria-labelledby="tools" className="card">
+          <h2 id="tools" className="border-b border-line px-4 py-3 font-semibold">
+            Ferramentas
+          </h2>
+          <ul>
+            <Row
+              title="Registros do FpsBoost"
+              text="Arquivos de log, úteis para entender um ajuste que falhou."
+              control={
+                <button className="btn btn-ghost btn-sm" onClick={() => window.fps.invoke('app:open-logs')}>
+                  Abrir pasta
+                </button>
+              }
+            />
+            <Row
+              title="Reiniciar o Explorador"
+              text="Recarrega a barra de tarefas e o menu Iniciar para aplicar ajustes de interface."
+              control={
+                <button className="btn btn-ghost btn-sm" onClick={() => action('app:restart-explorer', 'Explorador reiniciado')}>
+                  Reiniciar
+                </button>
+              }
+            />
+            <Row
+              title="Reiniciar na BIOS"
+              text="Reinicia o computador direto na configuração da placa-mãe (UEFI) em 5 segundos."
+              control={
+                <button className="btn btn-ghost btn-sm" onClick={() => action('app:reboot-firmware', 'Reiniciando na BIOS em 5 segundos')}>
+                  Reiniciar na BIOS
+                </button>
+              }
+            />
+          </ul>
+        </section>
       </div>
     </>
   )

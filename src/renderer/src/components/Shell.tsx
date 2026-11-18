@@ -1,98 +1,150 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
-import { Minus, Square, X, ShieldAlert } from 'lucide-react'
-import { NAV } from '../lib/nav'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Minus, Search, ShieldAlert, ShieldCheck, Square, X } from 'lucide-react'
+import { NAV_GROUPS } from '../lib/nav'
+import { startLivePolling, useLive } from '../lib/live'
+import { Logo } from './Logo'
 import { Toasts } from './Toasts'
 
-function TitleBar() {
+function WindowButtons() {
   return (
-    <header className="drag flex h-9 shrink-0 items-center justify-between bg-mask-deep pl-4">
-      <span className="type-heading text-[13px] text-silk-dim">FpsBoost</span>
-      <div className="no-drag flex h-full">
-        {(
-          [
-            ['window:minimize', Minus, 'Minimizar'],
-            ['window:maximize', Square, 'Maximizar'],
-            ['window:close', X, 'Fechar']
-          ] as const
-        ).map(([ch, Icon, label]) => (
-          <button
-            key={ch}
-            aria-label={label}
-            onClick={() => window.fps.send(ch)}
-            className={`grid w-11 place-items-center text-silk-dim hover:text-silk ${
-              ch === 'window:close' ? 'hover:bg-flux' : 'hover:bg-mask-raised'
-            }`}
-          >
-            <Icon size={14} strokeWidth={1.75} />
-          </button>
-        ))}
-      </div>
-    </header>
+    <div className="no-drag -mr-2 flex h-full">
+      {(
+        [
+          ['window:minimize', Minus, 'Minimizar'],
+          ['window:maximize', Square, 'Maximizar'],
+          ['window:close', X, 'Fechar']
+        ] as const
+      ).map(([ch, Icon, label]) => (
+        <button
+          key={ch}
+          aria-label={label}
+          onClick={() => window.fps.send(ch)}
+          className={`grid w-10 place-items-center rounded-[8px] text-muted hover:text-ink ${ch === 'window:close' ? 'hover:bg-danger' : 'hover:bg-card-2'}`}
+        >
+          <Icon size={14} strokeWidth={1.75} />
+        </button>
+      ))}
+    </div>
   )
 }
 
-/** Navigation drawn as a card-edge connector: each item has a gold finger that goes solid when active. */
-function EdgeConnector() {
+function Sidebar() {
   return (
-    <nav aria-label="Seções" className="flex w-56 shrink-0 flex-col bg-mask-deep py-3">
-      {NAV.map((item) => (
-        <NavLink
-          key={item.path}
-          to={item.path}
-          end={item.path === '/'}
-          className={({ isActive }) =>
-            `group relative flex items-center gap-3 py-2 pl-7 pr-4 text-[14px] transition-colors ${
-              isActive ? 'text-silk' : item.phase > 1 ? 'text-silk-dim/60 hover:text-silk-dim' : 'text-silk-dim hover:text-silk'
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <span
-                aria-hidden
-                className={`absolute left-0 top-1/2 h-6 w-3 -translate-y-1/2 rounded-r-[2px] transition-colors ${
-                  isActive ? 'bg-gold' : 'border border-l-0 border-gold/35 group-hover:border-gold/70'
-                }`}
-              />
-              <item.icon size={17} strokeWidth={1.75} className={isActive ? 'text-gold' : ''} />
-              <span style={{ fontVariationSettings: `'wdth' ${isActive ? 112 : 100}` }} className={isActive ? 'font-semibold' : ''}>
-                {item.label}
-              </span>
-            </>
-          )}
-        </NavLink>
+    <nav aria-label="Seções" className="flex w-[252px] shrink-0 flex-col overflow-y-auto border-r border-line bg-bg-2/70 px-4 pb-4 backdrop-blur">
+      <div className="drag flex h-[68px] shrink-0 items-center px-1.5">
+        <Logo />
+      </div>
+      {NAV_GROUPS.map((g) => (
+        <div key={g.label} className="mt-4 first:mt-1">
+          <p className="mb-1.5 px-3 text-[12px] font-medium text-muted/80">{g.label}</p>
+          <ul className="flex flex-col gap-0.5">
+            {g.items.map((item) => (
+              <li key={item.path}>
+                <NavLink
+                  to={item.path}
+                  end={item.path === '/'}
+                  className={({ isActive }) =>
+                    `flex h-9 items-center gap-3 rounded-[10px] px-3 transition-colors ${
+                      isActive
+                        ? 'bg-gradient-to-r from-primary to-[#4f6ef7] font-medium text-white shadow-[0_6px_18px_-6px_rgb(59_130_246_/0.8)]'
+                        : 'text-muted hover:bg-card-2/70 hover:text-ink'
+                    }`
+                  }
+                >
+                  <item.icon size={17} strokeWidth={1.75} />
+                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                  {item.phase > 1 && <span aria-label="em breve" title="Em breve" className="size-1.5 shrink-0 rounded-full bg-muted/50" />}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
       ))}
     </nav>
   )
 }
 
-function AdminNotice() {
+function TopBar() {
+  const navigate = useNavigate()
+  const [q, setQ] = useState('')
+  const [admin, setAdmin] = useState<boolean | null>(null)
+  const user = useLive((s) => s.info?.os.user)
+
+  useEffect(() => {
+    window.fps.invoke<boolean>('app:is-admin').then(setAdmin).catch(() => setAdmin(null))
+  }, [])
+
+  return (
+    <header className="drag flex h-[68px] shrink-0 items-center gap-3 px-7">
+      <form
+        className="no-drag relative w-[340px] max-w-full"
+        role="search"
+        onSubmit={(e) => {
+          e.preventDefault()
+          navigate(`/tweaks${q.trim() ? `?q=${encodeURIComponent(q.trim())}` : ''}`)
+        }}
+      >
+        <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+        <label htmlFor="global-search" className="sr-only">
+          Buscar ajustes
+        </label>
+        <input
+          id="global-search"
+          className="field w-full rounded-[12px] bg-card/80 pl-10"
+          placeholder="Buscar ajustes…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+      </form>
+      <div className="flex-1" />
+      {admin != null && (
+        <span
+          className={`no-drag inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-medium ${
+            admin ? 'border-up/30 bg-up/10 text-up' : 'border-danger/40 bg-danger/10 text-[#f87171]'
+          }`}
+          title={admin ? 'Os ajustes podem ser aplicados' : 'Abra o FpsBoost com "Executar como administrador"'}
+        >
+          {admin ? <ShieldCheck size={14} /> : <ShieldAlert size={14} />}
+          {admin ? 'Administrador' : 'Sem administrador'}
+        </span>
+      )}
+      {user && (
+        <span
+          className="no-drag grid size-9 place-items-center rounded-full bg-gradient-to-br from-[#38bdf8] to-violet text-[13px] font-semibold text-white"
+          title={user}
+        >
+          {user.slice(0, 2).toUpperCase()}
+        </span>
+      )}
+      <WindowButtons />
+    </header>
+  )
+}
+
+export function AdminNotice() {
   const [admin, setAdmin] = useState<boolean | null>(null)
   useEffect(() => {
     window.fps.invoke<boolean>('app:is-admin').then(setAdmin).catch(() => setAdmin(null))
   }, [])
   if (admin !== false) return null
   return (
-    <div role="alert" className="flex items-center gap-3 border-b border-flux/40 bg-flux/10 px-8 py-2.5 text-[14px]">
-      <ShieldAlert size={16} className="shrink-0 text-flux" />
-      O FpsBoost está sem permissão de administrador, então os ajustes não vão funcionar. Feche e abra de novo com
-      "Executar como administrador".
+    <div role="alert" className="mb-5 flex items-center gap-3 rounded-[12px] border border-danger/40 bg-danger/10 px-4 py-2.5">
+      <ShieldAlert size={16} className="shrink-0 text-[#f87171]" />
+      <p>Sem permissão de administrador: os ajustes não vão funcionar. Feche o FpsBoost e abra com "Executar como administrador".</p>
     </div>
   )
 }
 
 export function Shell() {
+  useEffect(() => startLivePolling(), [])
   return (
-    <div className="flex h-full flex-col">
-      <TitleBar />
-      <div className="flex min-h-0 flex-1">
-        <EdgeConnector />
-        <main className="pcb-surface min-w-0 flex-1 overflow-y-auto">
-          <AdminNotice />
-          <div className="mx-auto max-w-[1100px] px-10 pb-16 pt-10">
-            <Outlet />
-          </div>
+    <div className="flex h-full">
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <TopBar />
+        <main className="min-h-0 flex-1 overflow-y-auto px-7 pb-10 pt-1">
+          <Outlet />
         </main>
       </div>
       <Toasts />

@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react'
 
-export function PageHeader({ title, lead, children }: { title: string; lead?: string; children?: ReactNode }) {
+export function PageHeader({ title, lead, children }: { title: string; lead?: ReactNode; children?: ReactNode }) {
   return (
-    <div className="mb-9 flex flex-wrap items-end justify-between gap-6">
-      <div className="max-w-[60ch]">
-        <h1 className="type-display text-[44px]">{title}</h1>
-        {lead && <p className="mt-3 text-silk-dim">{lead}</p>}
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+      <div className="min-w-0">
+        <h1 className="text-[26px] font-bold leading-tight tracking-tight">{title}</h1>
+        {lead && <p className="mt-1 max-w-[75ch] text-muted">{lead}</p>}
       </div>
-      {children && <div className="flex gap-3">{children}</div>}
+      {children && <div className="flex shrink-0 items-center gap-2">{children}</div>}
     </div>
   )
 }

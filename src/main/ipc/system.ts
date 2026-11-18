@@ -56,29 +56,51 @@ async function collectInfo(): Promise<SystemInfo> {
 
 let gpuCache: { load: number | null; temp: number | null; at: number } = { load: null, temp: null, at: 0 }
 
-async function gpuStats(): Promise<{ load: number | null; temp: number | null }> {
-  // si.graphics() shells out to nvidia-smi / WMI and is slow; refresh at most every 4s.
-  if (Date.now() - gpuCache.at < 4000) return gpuCache
-  try {
-    const g = await si.graphics()
-    const main = g.controllers.find((c) => c.utilizationGpu != null) ?? g.controllers[0]
-    gpuCache = {
-      load: main?.utilizationGpu ?? null,
-      temp: main?.temperatureGpu ?? null,
-      at: Date.now()
-    }
-  } catch {
-    gpuCache = { ...gpuCache, at: Date.now() }
+let gpuRefreshing = false
+
+/**
+ * si.graphics() shells out to nvidia-smi / WMI and takes ~1.5s, so it refreshes in the
+ * background and live readings always return the cached value without waiting.
+ */
+function gpuStats(): { load: number | null; temp: number | null } {
+  if (!gpuRefreshing && Date.now() - gpuCache.at > 2000) {
+    gpuRefreshing = true
+    si.graphics()
+      .then((g) => {
+        const main = g.controllers.find((c) => c.utilizationGpu != null) ?? g.controllers[0]
+        gpuCache = { load: main?.utilizationGpu ?? gpuCache.load, temp: main?.temperatureGpu ?? gpuCache.temp, at: Date.now() }
+      })
+      .catch(() => (gpuCache = { ...gpuCache, at: Date.now() }))
+      .finally(() => (gpuRefreshing = false))
   }
   return gpuCache
 }
 
+let diskCache: { value: LiveStats['disk']; at: number } = { value: null, at: 0 }
+
+/** System drive usage; changes slowly, so refreshed every 30s. */
+async function diskStats(): Promise<LiveStats['disk']> {
+  if (Date.now() - diskCache.at < 30_000) return diskCache.value
+  try {
+    const drive = (process.env.SystemDrive ?? 'C:').toUpperCase()
+    const fs = (await si.fsSize()).find((f) => f.mount.toUpperCase() === drive)
+    diskCache = {
+      value: fs ? { usedPct: Math.round(fs.use), freeGb: Math.round(fs.available / GB), totalGb: Math.round(fs.size / GB) } : null,
+      at: Date.now()
+    }
+  } catch {
+    diskCache = { ...diskCache, at: Date.now() }
+  }
+  return diskCache.value
+}
+
 async function collectLive(): Promise<LiveStats> {
-  const [load, mem, temp, gpu] = await Promise.all([
+  const [load, mem, temp, gpu, disk] = await Promise.all([
     si.currentLoad(),
     si.mem(),
     si.cpuTemperature().catch(() => ({ main: null })),
-    gpuStats()
+    gpuStats(),
+    diskStats()
   ])
   return {
     cpuLoad: Math.round(load.currentLoad),
@@ -87,7 +109,7 @@ async function collectLive(): Promise<LiveStats> {
     memUsedGb: +(mem.active / GB).toFixed(1),
     gpuLoad: gpu.load,
     gpuTemp: gpu.temp,
-    diskActivityPct: null
+    disk
   }
 }
 

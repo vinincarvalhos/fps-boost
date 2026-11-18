@@ -1,47 +1,38 @@
-# FpsBoost — direção visual "Placa-mãe"
+# FpsBoost — direção visual (painel SaaS azul-marinho)
 
-**Assunto**: otimizador de Windows para quem joga. **Público**: jogadores de PC, 15–35 anos, que querem mais FPS sem quebrar o sistema. **Função principal**: aplicar e reverter ajustes com segurança, vendo o efeito no próprio hardware.
+Direção definida pelo usuário a partir de uma referência de dashboard SaaS: fundo azul-marinho profundo com brilho azul/violeta, cards arredondados translúcidos, item ativo em pílula azul com brilho, barra superior com busca, cards de métrica com tendência e gráfico de área, gráfico grande de linhas e gráfico de rosca.
 
-A interface é a placa de circuito do PC do usuário: máscara de solda verde, serigrafia branca, contatos e trilhas de ouro.
+## Logo
+`build/icon.svg` (componente `LogoMark` em `src/renderer/src/components/Logo.tsx`): hexágono arredondado em degradê `#38BDF8 → #3B82F6 → #8B5CF6` com duas setas brancas subindo ("boost"); a de baixo a 55% de opacidade. Ao lado, o nome "FpsBoost" em Plus Jakarta Sans 700.
+
+Para regenerar `build/icon.png` (512 px) e `build/icon.ico` (256 px) depois de mudar o SVG:
+```powershell
+npx electron scripts/render-icon.cjs
+```
 
 ## Cor
 | Token | Hex | Uso |
 |---|---|---|
-| `mask-deep` | `#082A21` | Barra lateral, fundo mais profundo |
-| `mask` | `#0E3B2F` | Superfície principal |
-| `mask-raised` | `#16503F` | Componentes (CIs), linhas em hover |
-| `silk` | `#EDEFE6` | Texto principal (serigrafia) |
-| `silk-dim` | `#9FB8AB` | Texto secundário |
-| `gold` | `#C9A44A` | Trilhas, pads, estado ligado |
-| `gold-hot` | `#F0D27A` | Trilha com carga alta |
-| `flux` | `#E5594F` | Risco "atenção", erros |
-
-Nada de preto puro nem cinza azulado; o "escuro" aqui é sempre verde.
+| `bg` | `#0A0F24` | Fundo, com brilhos radiais azul (topo direito) e violeta (base esquerda) |
+| `bg-2` | `#0E1530` | Barra lateral |
+| `card` / `card-2` | `#131B3A` / `#18224A` | Cards (degradê vertical entre os dois) |
+| `line` | `#222D58` | Bordas e divisórias |
+| `ink` / `muted` | `#E8ECF8` / `#8A94B8` | Texto principal / secundário |
+| `primary` → `violet` | `#3B82F6` → `#8B5CF6` | Botão principal, item ativo, chaves ligadas (degradê) |
+| `cpu` `gpu` `ram` `disk` | `#3B82F6` `#A855F7` `#F59E0B` `#22D3EE` | Cor fixa de cada recurso em gráficos e etiquetas |
+| `up` / `danger` | `#22C55E` / `#EF4444` | Tendência boa, sucesso / risco, erro |
 
 ## Tipografia
-Uma família: **Archivo** (variável, eixos `wght` e `wdth`). A largura é o recurso expressivo:
-- Títulos: `wdth 125`, `wght 800`, entrelinha apertada, caixa normal (sem caixa-alta).
-- Corpo: `wdth 100`, `wght 400`, 15px/1.5, linhas ≤ 72 caracteres.
-- Números ao vivo: `wdth 62` (condensado), `font-variant-numeric: tabular-nums`.
-- Designadores de componente (U1, J2, SW1) só no esquema do painel, onde identificam peças — como numa placa real.
+- **Plus Jakarta Sans** (variável): títulos, nomes de card e números grandes, com algarismos tabulares.
+- **Inter** (variável): texto de interface, 14px.
+
+## Componentes
+- `.card`: raio 14px, borda `line`, degradê `card-2 → card`, brilho interno no topo e sombra profunda.
+- `.btn-primary`: degradê azul→índigo com brilho azul; `.btn-ghost` para ações secundárias.
+- `Toggle`: trilho em degradê azul→violeta quando ligado.
+- `Sparkline`, `AreaChart` e `Donut` em `components/Sparkline.tsx`: área com degradê da cor do recurso até transparente.
 
 ## Layout
-```
-┌──────┬──────────────────────────────────────────┐
-│ borda│  Título largo                             │
-│ de   │                                           │
-│ conec│  [ conteúdo alinhado à esquerda ]         │
-│ tor  │                                           │
-│ (nav)│                                           │
-└──────┴──────────────────────────────────────────┘
-```
-- Navegação = borda de conector: cada item tem um "dedo" dourado que fica sólido quando ativo.
-- Conteúdo alinhado à esquerda, largura máxima ~1100px.
-- Raio 3px em CIs/painéis, pads circulares; hierarquia por largura de fonte e espessura de trilha, não por sombras.
-
-## Princípios
-1. **O destaque é o esquema do painel**: CPU, GPU, RAM e disco reais desenhados como CIs, ligados por trilhas que brilham conforme a carga. Todo o resto fica quieto.
-2. **Ajustes são DIP switches**: alavanca retangular que desliza e trava com o contato dourado — o movimento mostra o que mudou.
-3. **Sem decoração gratuita**: sem gradientes, sem sombras suaves genéricas, sem animação de entrada em cada seção.
-4. **Texto direto**: verbos claros ("Aplicar", "Reverter", "Criar ponto de restauração"); erros dizem o que houve e como resolver.
-5. Foco visível de teclado (contorno dourado), `prefers-reduced-motion` respeitado.
+- Barra lateral de 252px: logo, grupos (Sistema, Otimizar, Jogos, Hardware, Segurança); seções futuras com um ponto cinza ("em breve").
+- Barra superior: busca de ajustes (vai para Ajustes com `?q=`), selo de administrador, avatar com as iniciais e botões da janela.
+- Painel: 4 KPIs → gráfico em tempo real + rosca de ajustes ativos → atividade recente, recomendados e hardware.

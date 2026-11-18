@@ -17,13 +17,13 @@ export function Modal({ title, children, onClose, actions }: Props) {
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-auto w-[560px] max-w-[92vw] rounded-chip border border-gold/60 bg-mask p-0 text-silk backdrop:bg-mask-deep/80"
+      className="m-auto w-[520px] max-w-[92vw] rounded-[14px] border border-line bg-card p-0 text-ink backdrop:bg-black/50"
     >
-      <div className="p-7">
-        <h2 className="type-heading text-[24px]">{title}</h2>
-        <div className="prose-silk mt-4 max-h-[50vh] overflow-y-auto pr-2 text-[15px] text-silk-dim">{children}</div>
+      <div className="px-6 pb-5 pt-5">
+        <h2 className="text-[18px] font-semibold">{title}</h2>
+        <div className="prose-ui mt-3 max-h-[50vh] overflow-y-auto text-muted">{children}</div>
       </div>
-      <div className="flex justify-end gap-3 border-t border-mask-line bg-mask-deep px-7 py-4">{actions}</div>
+      <div className="flex justify-end gap-2 border-t border-line px-6 py-3.5">{actions}</div>
     </dialog>
   )
 }

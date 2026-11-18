@@ -1,20 +1,27 @@
-@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource-variable/inter/index.css';
+@import '@fontsource-variable/plus-jakarta-sans/index.css';
 @import 'tailwindcss';
 
-/* Tokens — see docs/design.md ("Placa-mãe") */
+/* Tokens — see docs/design.md (navy SaaS dashboard) */
 @theme {
-  --color-mask-deep: #082a21;
-  --color-mask: #0e3b2f;
-  --color-mask-raised: #16503f;
-  --color-mask-line: #1f6250;
-  --color-silk: #edefe6;
-  --color-silk-dim: #9fb8ab;
-  --color-gold: #c9a44a;
-  --color-gold-hot: #f0d27a;
-  --color-flux: #e5594f;
+  --color-bg: #0a0f24;
+  --color-bg-2: #0e1530;
+  --color-card: #131b3a;
+  --color-card-2: #18224a;
+  --color-line: #222d58;
+  --color-ink: #e8ecf8;
+  --color-muted: #8a94b8;
+  --color-primary: #3b82f6;
+  --color-violet: #8b5cf6;
+  --color-cpu: #3b82f6;
+  --color-gpu: #a855f7;
+  --color-ram: #f59e0b;
+  --color-disk: #22d3ee;
+  --color-up: #22c55e;
+  --color-danger: #ef4444;
 
-  --font-sans: 'Archivo Variable', 'Segoe UI', sans-serif;
-  --radius-chip: 3px;
+  --font-sans: 'Inter Variable', 'Segoe UI', sans-serif;
+  --font-display: 'Plus Jakarta Sans Variable', 'Inter Variable', sans-serif;
 }
 
 @layer base {
@@ -25,133 +32,149 @@
   }
   body {
     margin: 0;
-    background: var(--color-mask);
-    color: var(--color-silk);
+    color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.5;
-    font-variation-settings: 'wdth' 100;
+    font-size: 14px;
+    line-height: 1.45;
     -webkit-font-smoothing: antialiased;
     user-select: none;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgb(59 130 246 / 0.18), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgb(139 92 246 / 0.12), transparent 60%),
+      var(--color-bg);
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
   }
   :focus-visible {
-    outline: 2px solid var(--color-gold);
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
-  }
-  ::selection {
-    background: var(--color-gold);
-    color: var(--color-mask-deep);
   }
   ::-webkit-scrollbar {
     width: 10px;
+    height: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-mask-line);
-    border: 3px solid var(--color-mask);
+    background: var(--color-line);
+    border: 3px solid var(--color-bg);
     border-radius: 6px;
   }
 }
 
 @layer components {
-  /* Wide display type: the width axis is the expressive device */
-  .type-display {
-    font-variation-settings: 'wdth' 125;
-    font-weight: 800;
-    line-height: 1.02;
-    letter-spacing: -0.01em;
-  }
-  .type-heading {
-    font-variation-settings: 'wdth' 118;
-    font-weight: 700;
-    line-height: 1.15;
-  }
-  .type-numeric {
-    font-variation-settings: 'wdth' 62;
-    font-weight: 600;
+  .num {
+    font-family: var(--font-display);
     font-variant-numeric: tabular-nums;
-    line-height: 1;
+    line-height: 1.05;
   }
 
-  /* Solder-mask surface with a faint copper-pour hatch */
-  .pcb-surface {
-    background-color: var(--color-mask);
-    background-image: radial-gradient(circle at 1px 1px, rgb(237 239 230 / 0.045) 1px, transparent 0);
-    background-size: 14px 14px;
-  }
-
-  /* An IC package: flat, square-ish, with pins drawn on the sides */
-  .ic {
+  /* Glassy card with a faint top highlight, as in the reference */
+  .card {
     position: relative;
-    background: var(--color-mask-deep);
-    border: 1px solid var(--color-mask-line);
-    border-radius: var(--radius-chip);
+    background: linear-gradient(180deg, rgb(24 34 74 / 0.85), rgb(19 27 58 / 0.85));
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.04),
+      0 10px 30px -12px rgb(0 0 0 / 0.6);
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
   }
 
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 1rem;
-    border-radius: var(--radius-chip);
+    justify-content: center;
+    gap: 0.45rem;
+    height: 36px;
+    padding: 0 1rem;
+    border-radius: 10px;
     font-weight: 600;
-    font-variation-settings: 'wdth' 108;
-    transition: background-color 120ms, color 120ms, border-color 120ms;
+    white-space: nowrap;
+    transition: filter 120ms, background-color 120ms, border-color 120ms;
     cursor: pointer;
   }
   .btn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
   }
-  .btn-gold {
-    background: var(--color-gold);
-    color: var(--color-mask-deep);
+  .btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: #fff;
+    box-shadow: 0 6px 18px -6px rgb(59 130 246 / 0.7);
   }
-  .btn-gold:not(:disabled):hover {
-    background: var(--color-gold-hot);
+  .btn-primary:not(:disabled):hover {
+    filter: brightness(1.12);
   }
-  .btn-line {
-    border: 1px solid var(--color-mask-line);
-    color: var(--color-silk);
+  .btn-ghost {
+    background: rgb(255 255 255 / 0.03);
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
   }
-  .btn-line:not(:disabled):hover {
-    border-color: var(--color-gold);
+  .btn-ghost:not(:disabled):hover {
+    background: var(--color-card-2);
   }
-  .btn-flux {
-    border: 1px solid var(--color-flux);
-    color: var(--color-flux);
+  .btn-danger {
+    border: 1px solid rgb(239 68 68 / 0.5);
+    color: #f87171;
   }
-  .btn-flux:not(:disabled):hover {
-    background: var(--color-flux);
-    color: var(--color-mask-deep);
+  .btn-danger:not(:disabled):hover {
+    background: var(--color-danger);
+    color: #fff;
+  }
+  .btn-sm {
+    height: 30px;
+    padding: 0 0.75rem;
+    font-size: 13px;
+    border-radius: 8px;
   }
 
   .field {
-    background: var(--color-mask-deep);
-    border: 1px solid var(--color-mask-line);
-    border-radius: var(--radius-chip);
-    padding: 0.5rem 0.75rem;
-    color: var(--color-silk);
+    height: 38px;
+    background: rgb(10 15 36 / 0.6);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 0 0.85rem;
+    color: var(--color-ink);
   }
   .field::placeholder {
-    color: var(--color-silk-dim);
+    color: var(--color-muted);
   }
 
-  .prose-silk p {
-    margin: 0 0 0.75em;
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    height: 21px;
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgb(255 255 255 / 0.05);
+    color: var(--color-muted);
   }
-  .prose-silk ul {
+
+  .prose-ui p {
+    margin: 0 0 0.65em;
+  }
+  .prose-ui ul {
     list-style: disc;
-    padding-left: 1.25em;
-    margin: 0 0 0.75em;
+    padding-left: 1.2em;
+    margin: 0 0 0.65em;
   }
-  .prose-silk strong {
-    color: var(--color-gold-hot);
+  .prose-ui strong {
+    color: var(--color-ink);
     font-weight: 600;
   }
-  .prose-silk code {
-    background: var(--color-mask-deep);
+  .prose-ui code {
+    background: var(--color-bg);
     padding: 0 0.3em;
-    border-radius: 2px;
+    border-radius: 4px;
     font-size: 0.92em;
   }
 }
@@ -160,8 +183,8 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }
 

@@ -24,8 +24,9 @@ function createWindow(): void {
     minHeight: 640,
     frame: false,
     show: false,
-    backgroundColor: '#082A21',
+    backgroundColor: '#1A2029',
     title: 'FpsBoost',
+    icon: join(app.getAppPath(), 'build', 'icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,

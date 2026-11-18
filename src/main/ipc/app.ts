@@ -23,6 +23,7 @@ export function registerAppIpc(): void {
 
   ipcMain.handle('app:open-logs', () => shell.openPath(dirname(log.transports.file.getFile().path)))
   ipcMain.handle('app:version', () => app.getVersion())
+  ipcMain.handle('history:list', () => store.get('history'))
   ipcMain.handle('app:is-admin', async () => (await runPs('([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)')).stdout === 'True')
   ipcMain.handle('app:restart-explorer', async () => {
     const res = await runPs('Stop-Process -Name explorer -Force; Start-Sleep -Milliseconds 800; if (-not (Get-Process explorer -ErrorAction SilentlyContinue)) { Start-Process explorer }')

@@ -41,7 +41,8 @@ export interface LiveStats {
   memUsedGb: number
   gpuLoad: number | null
   gpuTemp: number | null
-  diskActivityPct: number | null
+  /** system drive usage */
+  disk: { usedPct: number; freeGb: number; totalGb: number } | null
 }
 
 export interface RestorePoint {
@@ -77,9 +78,16 @@ export const INVOKE_CHANNELS = [
   'app:reboot',
   'app:reboot-firmware',
   'app:version',
-  'app:is-admin'
+  'app:is-admin',
+  'history:list'
 ] as const
 export type InvokeChannel = (typeof INVOKE_CHANNELS)[number]
 
 export const SEND_CHANNELS = ['window:minimize', 'window:maximize', 'window:close'] as const
 export type SendChannel = (typeof SEND_CHANNELS)[number]
+
+export interface ActivityEntry {
+  kind: 'applied' | 'reverted' | 'restore-point'
+  title: string
+  at: string
+}
