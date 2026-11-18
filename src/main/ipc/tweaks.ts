@@ -2,7 +2,8 @@ import { app, ipcMain } from 'electron'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import log from 'electron-log/main'
-import type { TweakResult } from '@shared/types'
+import { isPremiumTweak, type TweakResult } from '@shared/types'
+import { isPremium } from '../services/license'
 import { runPs, runPsFile } from '../services/powershell'
 import { logActivity, store } from '../services/store'
 import { createRestorePoint } from '../services/restore'
@@ -64,6 +65,7 @@ export function registerTweakIpc(): void {
       const meta = loadTweaks().find((t) => t.id === id)
       const file = scriptPath(id, 'apply')
       if (!meta || !file) return { ok: false, output: '', error: 'Ajuste não encontrado' }
+      if (isPremiumTweak(meta) && !isPremium()) return { ok: false, output: '', error: 'Este ajuste avançado faz parte do plano Premium. Ative sua chave em Licença.' }
 
       if (store.get('settings').autoRestorePoint && !store.get('firstTweakRestorePointDone')) {
         const rp = await createRestorePoint('FpsBoost - antes dos ajustes')

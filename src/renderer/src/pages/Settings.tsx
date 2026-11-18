@@ -3,6 +3,7 @@ import type { Settings as SettingsT } from '@shared/types'
 import { PageHeader } from '../components/PageHeader'
 import { Toggle } from '../components/Toggle'
 import { toast } from '../lib/toast'
+import { UpdatesCard } from '../components/UpdatesCard'
 
 const OPTIONS: { key: keyof SettingsT; title: string; text: string }[] = [
   { key: 'autostart', title: 'Abrir com o Windows', text: 'O FpsBoost inicia minimizado quando você entra no Windows.' },
@@ -59,6 +60,8 @@ export function Settings() {
             ))}
           </ul>
         </section>
+
+        <UpdatesCard />
 
         <section aria-labelledby="tools" className="card">
           <h2 id="tools" className="border-b border-line px-4 py-3 font-semibold">

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Minus, Search, ShieldAlert, ShieldCheck, Square, X } from 'lucide-react'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { ArrowDownToLine, Crown, Minus, Search, ShieldAlert, ShieldCheck, Square, X } from 'lucide-react'
+import { startAccountSync, useAccount } from '../lib/account'
+import { Upsell } from './Upsell'
 import { NAV_GROUPS } from '../lib/nav'
 import { startLivePolling, useLive } from '../lib/live'
 import { Logo } from './Logo'
@@ -36,7 +38,7 @@ function Sidebar() {
         <Logo />
       </div>
       {NAV_GROUPS.map((g) => (
-        <div key={g.label} className="mt-4 first:mt-1">
+        <div key={g.label} className="mt-3 first:mt-1">
           <p className="mb-1.5 px-3 text-[12px] font-medium text-muted/80">{g.label}</p>
           <ul className="flex flex-col gap-0.5">
             {g.items.map((item) => (
@@ -45,7 +47,7 @@ function Sidebar() {
                   to={item.path}
                   end={item.path === '/'}
                   className={({ isActive }) =>
-                    `flex h-9 items-center gap-3 rounded-[10px] px-3 transition-colors ${
+                    `flex h-[34px] items-center gap-3 rounded-[10px] px-3 transition-colors ${
                       isActive
                         ? 'bg-gradient-to-r from-primary to-[#4f6ef7] font-medium text-white shadow-[0_6px_18px_-6px_rgb(59_130_246_/0.8)]'
                         : 'text-muted hover:bg-card-2/70 hover:text-ink'
@@ -98,6 +100,8 @@ function TopBar() {
         />
       </form>
       <div className="flex-1" />
+      <UpdatePill />
+      <PlanBadge />
       {admin != null && (
         <span
           className={`no-drag inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-medium ${
@@ -122,6 +126,37 @@ function TopBar() {
   )
 }
 
+/** Plan badge in the top bar; links to the License page. */
+function PlanBadge() {
+  const premium = useAccount((s) => s.license.plan === 'premium')
+  return (
+    <Link
+      to="/license"
+      className={`no-drag inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold ${
+        premium
+          ? 'bg-gradient-to-r from-primary to-violet text-white shadow-[0_4px_14px_-4px_rgb(139_92_246_/0.8)]'
+          : 'border border-line bg-card/70 text-muted hover:text-ink'
+      }`}
+    >
+      <Crown size={13} />
+      {premium ? 'Premium' : 'Grátis'}
+    </Link>
+  )
+}
+
+/** Appears only when there is an update to download or install. */
+function UpdatePill() {
+  const u = useAccount((s) => s.updater)
+  if (!u || !['available', 'downloading', 'downloaded'].includes(u.status)) return null
+  const label = u.status === 'downloaded' ? 'Reiniciar para atualizar' : u.status === 'downloading' ? `Baixando ${u.percent ?? 0}%` : `Versão ${u.version} disponível`
+  return (
+    <Link to="/settings" className="no-drag inline-flex h-8 items-center gap-1.5 rounded-full border border-primary/50 bg-primary/15 px-3 text-[12.5px] font-medium text-[#93c5fd]">
+      <ArrowDownToLine size={13} />
+      {label}
+    </Link>
+  )
+}
+
 export function AdminNotice() {
   const [admin, setAdmin] = useState<boolean | null>(null)
   useEffect(() => {
@@ -137,7 +172,10 @@ export function AdminNotice() {
 }
 
 export function Shell() {
-  useEffect(() => startLivePolling(), [])
+  useEffect(() => {
+    startLivePolling()
+    startAccountSync()
+  }, [])
   return (
     <div className="flex h-full">
       <Sidebar />
@@ -148,6 +186,7 @@ export function Shell() {
         </main>
       </div>
       <Toasts />
+      <Upsell />
     </div>
   )
 }

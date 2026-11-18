@@ -1,0 +1,13 @@
+{
+  "name": "fpsboost-license-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev.js",
+    "keys": "node scripts/gen-keys.js"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.35.0"
+  },
+  "engines": { "node": ">=20" }
+}

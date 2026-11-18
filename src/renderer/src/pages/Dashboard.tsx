@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowDown, ArrowUp, Check, ChevronRight, Minus } from 'lucide-react'
+import { ArrowDown, ArrowUp, Check, ChevronRight, Crown, Minus } from 'lucide-react'
 import type { ActivityEntry, TweakMeta } from '@shared/types'
 import { ConfirmTweak } from '../components/ConfirmTweak'
 import { PageHeader } from '../components/PageHeader'
 import { AreaChart, Donut, Sparkline } from '../components/Sparkline'
 import { useLive } from '../lib/live'
+import { useAccount, usePremium } from '../lib/account'
+import { isPremiumTweak } from '@shared/types'
 import { categoryOf, needsConfirm, sortCategories, useTweaks } from '../lib/tweaks'
 
 const C = { cpu: '#3B82F6', gpu: '#A855F7', ram: '#F59E0B', disk: '#22D3EE' }
@@ -92,13 +94,20 @@ export function Dashboard() {
   const safeRec = pendingRec.filter((t) => !needsConfirm(t))
   const mainGpu = info?.gpus[0]
 
-  const toggle = (t: TweakMeta) => (needsConfirm(t) ? setConfirming(t) : run(t, true))
+  const premium = usePremium()
+  const openUpsell = useAccount((s) => s.openUpsell)
+  const toggle = (t: TweakMeta) => (isPremiumTweak(t) && !premium ? openUpsell() : needsConfirm(t) ? setConfirming(t) : run(t, true))
+  const optimize = async () => {
+    if (!premium) return openUpsell()
+    for (const t of safeRec) await run(t, true)
+  }
 
   return (
     <>
       <PageHeader title="Visão geral" lead={info ? `${info.os.distro.replace('Microsoft ', '')}, build ${info.os.build}` : 'Lendo informações do sistema…'}>
         <span className="inline-flex h-9 items-center rounded-[10px] border border-line bg-card/70 px-3 text-[13px] text-muted">Atualiza a cada 1,5 s</span>
-        <button className="btn btn-primary" disabled={loading || safeRec.length === 0 || busy.size > 0} onClick={async () => { for (const t of safeRec) await run(t, true) }}>
+        <button className="btn btn-primary" disabled={loading || safeRec.length === 0 || busy.size > 0} onClick={optimize}>
+          {!premium && <Crown size={15} />}
           Otimizar agora{safeRec.length ? ` (${safeRec.length})` : ''}
         </button>
       </PageHeader>

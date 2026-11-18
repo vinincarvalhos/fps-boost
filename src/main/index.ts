@@ -5,6 +5,9 @@ import { registerAppIpc } from './ipc/app'
 import { registerBackupIpc } from './ipc/backup'
 import { registerSystemIpc } from './ipc/system'
 import { registerTweakIpc } from './ipc/tweaks'
+import { registerAccountIpc } from './ipc/account'
+import { initLicense } from './services/license'
+import { initUpdater } from './services/updater'
 import { store } from './services/store'
 import { initTray, isTrayEnabled, setTrayEnabled } from './tray'
 
@@ -76,6 +79,9 @@ if (!app.requestSingleInstanceLock()) {
     registerTweakIpc()
     registerBackupIpc()
     registerAppIpc()
+    registerAccountIpc()
+    initLicense().catch((err) => log.error('[license] init', err))
+    initUpdater()
 
     createWindow()
     initTray(() => win)

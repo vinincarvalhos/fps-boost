@@ -79,12 +79,64 @@ export const INVOKE_CHANNELS = [
   'app:reboot-firmware',
   'app:version',
   'app:is-admin',
-  'history:list'
+  'history:list',
+  'license:status',
+  'license:activate',
+  'license:deactivate',
+  'license:refresh',
+  'updater:state',
+  'updater:check',
+  'updater:download',
+  'updater:install'
 ] as const
 export type InvokeChannel = (typeof INVOKE_CHANNELS)[number]
 
 export const SEND_CHANNELS = ['window:minimize', 'window:maximize', 'window:close'] as const
 export type SendChannel = (typeof SEND_CHANNELS)[number]
+
+/** Events the main process pushes to the renderer. */
+export const ON_CHANNELS = ['license:changed', 'updater:changed'] as const
+export type OnChannel = (typeof ON_CHANNELS)[number]
+
+export type Plan = 'free' | 'premium'
+
+export interface LicenseState {
+  plan: Plan
+  /**
+   * none: no key; active: premium and recently validated; offline: premium on a still-valid
+   * token while the server can't be reached; lapsed: token expired offline; error: key refused.
+   */
+  status: 'none' | 'active' | 'offline' | 'lapsed' | 'error'
+  /** key with the middle groups hidden, e.g. FPSB-ABCDE-•••••-•••••-RSTUV */
+  maskedKey?: string
+  licenseExpiresAt?: string | null
+  /** when the app must revalidate online to stay premium */
+  validUntil?: string
+  machinesUsed?: number
+  maxMachines?: number
+  message?: string
+}
+
+export interface LicenseResult {
+  ok: boolean
+  state: LicenseState
+  error?: string
+}
+
+/** Premium-only tweaks: the advanced ones that ask for confirmation. */
+export function isPremiumTweak(t: { risk: Risk }): boolean {
+  return t.risk === 'caution'
+}
+
+export interface UpdaterState {
+  status: 'idle' | 'checking' | 'available' | 'not-available' | 'downloading' | 'downloaded' | 'error' | 'dev'
+  currentVersion: string
+  version?: string
+  releaseNotes?: string
+  percent?: number
+  error?: string
+  checkedAt?: string
+}
 
 export interface ActivityEntry {
   kind: 'applied' | 'reverted' | 'restore-point'

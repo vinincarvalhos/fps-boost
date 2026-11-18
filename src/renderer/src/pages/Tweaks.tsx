@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { ChevronDown, RotateCcw, Search } from 'lucide-react'
+import { ChevronDown, Crown, RotateCcw, Search } from 'lucide-react'
+import { isPremiumTweak } from '@shared/types'
+import { useAccount, usePremium } from '../lib/account'
 import type { TweakMeta } from '@shared/types'
 import { ConfirmTweak } from '../components/ConfirmTweak'
 import { PageHeader } from '../components/PageHeader'
@@ -35,6 +37,11 @@ function TweakRow({ tweak, on, busy, onToggle }: { tweak: TweakMeta; on: boolean
           <div className="flex flex-wrap items-center gap-1.5">
             <h3 className="mr-1 font-medium">{tweak.title}</h3>
             {tweak.recommended && <span className="tag text-primary">Recomendado</span>}
+            {isPremiumTweak(tweak) && (
+              <span className="tag bg-gradient-to-r from-primary/25 to-violet/25 text-[#c4b5fd]">
+                <Crown size={11} /> Premium
+              </span>
+            )}
             {tweak.risk === 'caution' && <span className="tag text-danger">Exige atenção</span>}
             {tweak.restart && <span className="tag">Pede reinício</span>}
             {!tweak.reversible && <span className="tag">Sem reversão</span>}
@@ -108,8 +115,12 @@ export function Tweaks() {
     })
   }, [list, states, category, query, filter])
 
+  const premium = usePremium()
+  const openUpsell = useAccount((s) => s.openUpsell)
   const toggle = (t: TweakMeta) => {
-    if (!states[t.id] && needsConfirm(t)) setConfirming(t)
+    // reverting stays free so nobody is stuck with a premium tweak applied
+    if (!states[t.id] && isPremiumTweak(t) && !premium) openUpsell()
+    else if (!states[t.id] && needsConfirm(t)) setConfirming(t)
     else run(t, !states[t.id])
   }
 
@@ -127,9 +138,11 @@ export function Tweaks() {
           className="btn btn-primary"
           disabled={loading || safeRec.length === 0 || busy.size > 0}
           onClick={async () => {
+            if (!premium) return openUpsell()
             for (const t of safeRec) await run(t, true)
           }}
         >
+          {!premium && <Crown size={15} />}
           Aplicar recomendados{safeRec.length ? ` (${safeRec.length})` : ''}
         </button>
       </PageHeader>

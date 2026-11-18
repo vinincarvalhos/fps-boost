@@ -7,6 +7,7 @@ import {
   MemoryStick,
   MonitorCog,
   Package,
+  Crown,
   Settings2,
   SlidersHorizontal,
   Sparkles,
@@ -62,8 +63,9 @@ export const NAV_GROUPS: NavGroup[] = [
     ]
   },
   {
-    label: 'Segurança',
+    label: 'Conta e segurança',
     items: [
+      { path: '/license', label: 'Licença', icon: Crown, phase: 1, summary: 'Ative sua chave Premium.' },
       { path: '/backup', label: 'Backup', icon: Archive, phase: 1, summary: 'Pontos de restauração e cópias do registro.' },
       { path: '/settings', label: 'Configurações', icon: Settings2, phase: 1, summary: 'Inicialização, bandeja e registros.' }
     ]
