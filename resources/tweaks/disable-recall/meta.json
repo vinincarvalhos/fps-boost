@@ -1,0 +1,13 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar o Recall",
+  "description": "Impede o Windows de tirar capturas de tela periódicas para a busca do Recall.",
+  "category": [
+    "Privacidade"
+  ],
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI",
+    "HKCU:\\Software\\Policies\\Microsoft\\Windows\\WindowsAI"
+  ]
+}

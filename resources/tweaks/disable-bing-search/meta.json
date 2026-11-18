@@ -1,0 +1,15 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Busca do Iniciar sem Bing",
+  "description": "A busca do menu Iniciar mostra só arquivos e apps do seu PC, sem resultados da web.",
+  "details": "Fica mais rápida e não envia o que você digita para a internet. Vale depois de reiniciar o Explorer.",
+  "category": [
+    "Privacidade"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\Software\\Policies\\Microsoft\\Windows\\Explorer",
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Search"
+  ]
+}

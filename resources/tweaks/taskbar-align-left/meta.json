@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Barra de tarefas à esquerda",
+  "description": "Move o botão Iniciar e os ícones para a esquerda, como no Windows 10.",
+  "category": [
+    "Interface"
+  ],
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
+  ]
+}

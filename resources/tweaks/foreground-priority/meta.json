@@ -1,0 +1,15 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Prioridade para a janela em foco",
+  "description": "Dá fatias de tempo de CPU mais curtas e favorece o programa que está na frente, como o jogo.",
+  "details": "Define `Win32PrioritySeparation` como `0x26` (fatias curtas, variáveis, com bônus para o primeiro plano).",
+  "category": [
+    "Desempenho"
+  ],
+  "hardware": "cpu",
+  "recommended": true,
+  "backupKeys": [
+    "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\PriorityControl"
+  ]
+}

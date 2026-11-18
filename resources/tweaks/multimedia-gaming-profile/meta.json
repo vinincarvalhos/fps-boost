@@ -1,0 +1,14 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Perfil multimídia para jogos",
+  "description": "Reserva menos CPU para tarefas de fundo e dá prioridade alta de GPU e agendamento para jogos.",
+  "category": [
+    "Desempenho"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+    "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games"
+  ]
+}

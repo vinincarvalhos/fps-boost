@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Mostrar o que o Windows está fazendo ao ligar",
+  "description": "Na inicialização e no desligamento aparece o passo atual, em vez de só \"Aguarde\".",
+  "category": [
+    "Sistema"
+  ],
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+  ]
+}

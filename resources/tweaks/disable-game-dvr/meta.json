@@ -1,0 +1,16 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar gravação em segundo plano (Game DVR)",
+  "description": "Impede o Windows de gravar os últimos minutos de jogo o tempo todo, o que consome GPU e disco.",
+  "details": "Desliga a captura contínua do Xbox Game Bar. A Game Bar continua abrindo com **Win+G**; só a gravação automática para.",
+  "category": [
+    "Jogos"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\System\\GameConfigStore",
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR",
+    "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR"
+  ]
+}

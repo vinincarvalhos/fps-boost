@@ -1,0 +1,12 @@
+{
+  "title": "Desligar compressão de memória",
+  "description": "O Windows para de comprimir páginas da RAM, poupando CPU. Só vale a pena com 16 GB ou mais.",
+  "details": "Com pouca RAM, desligar isso faz o sistema usar mais o arquivo de paginação, o que é **mais lento**. **Precisa reiniciar.**",
+  "confirm": "Indicado só para PCs com 16 GB de RAM ou mais. Com menos, o desempenho pode piorar.",
+  "risk": "caution",
+  "reversible": true,
+  "restart": true,
+  "category": [
+    "Desempenho"
+  ]
+}

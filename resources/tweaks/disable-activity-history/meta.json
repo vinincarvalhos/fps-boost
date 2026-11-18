@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar histórico de atividades",
+  "description": "O Windows deixa de registrar quais programas e arquivos você abre.",
+  "category": [
+    "Privacidade"
+  ],
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System"
+  ]
+}

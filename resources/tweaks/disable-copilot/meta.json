@@ -1,0 +1,14 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar o Copilot",
+  "description": "Remove o botão e o atalho do Copilot da barra de tarefas.",
+  "category": [
+    "Privacidade"
+  ],
+  "backupKeys": [
+    "HKCU:\\Software\\Policies\\Microsoft\\Windows\\WindowsCopilot",
+    "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsCopilot",
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
+  ]
+}

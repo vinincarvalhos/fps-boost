@@ -1,0 +1,10 @@
+{
+  "title": "Desligar hibernação",
+  "description": "Apaga o arquivo hiberfil.sys (do tamanho de boa parte da sua RAM) e desliga a Inicialização Rápida.",
+  "details": "Libera vários GB no disco do sistema e faz o \"Desligar\" ser um desligamento completo, o que evita drivers em estado ruim depois de dias sem reiniciar.",
+  "risk": "safe",
+  "reversible": true,
+  "category": [
+    "Sistema"
+  ]
+}

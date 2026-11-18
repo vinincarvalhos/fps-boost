@@ -1,0 +1,11 @@
+﻿# Gerado por scripts/gen-registry-tweaks.mjs
+$ErrorActionPreference = 'Stop'
+$stash = 'HKLM:\SOFTWARE\FpsBoost\Stash\prefer-ipv4'
+$saved = Get-ItemProperty -Path $stash -ErrorAction SilentlyContinue
+$prev = if ($saved) { $saved.'0' } else { '__absent__' }
+if ($prev -eq '__absent__') {
+  Remove-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters' -Name 'DisabledComponents' -ErrorAction SilentlyContinue
+} else {
+  New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters' -Name 'DisabledComponents' -Value ([uint32][int64]$prev) -PropertyType DWord -Force | Out-Null
+}
+Remove-Item -Path $stash -Force -ErrorAction SilentlyContinue

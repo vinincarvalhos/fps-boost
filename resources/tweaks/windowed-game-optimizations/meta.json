@@ -1,0 +1,14 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Otimizar jogos em janela",
+  "description": "Usa o modelo de apresentação moderno em jogos DirectX 10/11 em janela, com menos latência e suporte a VRR.",
+  "category": [
+    "Jogos"
+  ],
+  "hardware": "gpu",
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\DirectX\\UserGpuPreferences"
+  ]
+}

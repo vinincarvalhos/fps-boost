@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Caminhos de arquivo longos",
+  "description": "Permite caminhos com mais de 260 caracteres, comum em mods de jogos e projetos de programação.",
+  "category": [
+    "Sistema"
+  ],
+  "backupKeys": [
+    "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\FileSystem"
+  ]
+}

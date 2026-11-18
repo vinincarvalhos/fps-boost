@@ -1,0 +1,13 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "\"Finalizar tarefa\" na barra de tarefas",
+  "description": "Clique com o botão direito num app travado na barra de tarefas e feche-o sem abrir o Gerenciador.",
+  "category": [
+    "Interface"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarDeveloperSettings"
+  ]
+}

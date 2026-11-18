@@ -1,0 +1,12 @@
+{
+  "title": "Manter todos os núcleos acordados",
+  "description": "Impede o Windows de estacionar núcleos da CPU, eliminando o atraso para acordá-los quando a carga sobe.",
+  "details": "Define o mínimo de núcleos ativos do plano de energia atual (na tomada e na bateria) em 100%. Os valores anteriores são guardados e voltam ao reverter.\n\n**A CPU fica um pouco mais quente e gasta mais energia parada.**",
+  "confirm": "Todos os núcleos ficam acordados o tempo todo. A temperatura e o consumo em repouso sobem um pouco.",
+  "risk": "caution",
+  "reversible": true,
+  "category": [
+    "Desempenho"
+  ],
+  "hardware": "cpu"
+}

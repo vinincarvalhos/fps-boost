@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar localização",
+  "description": "Apps e o Windows deixam de acessar sua localização.",
+  "category": [
+    "Privacidade"
+  ],
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location"
+  ]
+}

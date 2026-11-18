@@ -1,0 +1,14 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar o Power Throttling",
+  "description": "Impede o Windows de reduzir a CPU de programas em segundo plano, como Discord e OBS durante o jogo.",
+  "details": "Em notebooks, a bateria dura menos.",
+  "category": [
+    "Desempenho"
+  ],
+  "hardware": "cpu",
+  "backupKeys": [
+    "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Power\\PowerThrottling"
+  ]
+}

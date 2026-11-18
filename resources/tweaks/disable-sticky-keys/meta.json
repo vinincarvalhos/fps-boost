@@ -1,0 +1,15 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Parar o aviso de Teclas de Aderência",
+  "description": "Apertar Shift cinco vezes no meio do jogo deixa de abrir a janela de Teclas de Aderência.",
+  "category": [
+    "Jogos"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\Control Panel\\Accessibility\\StickyKeys",
+    "HKCU:\\Control Panel\\Accessibility\\ToggleKeys",
+    "HKCU:\\Control Panel\\Accessibility\\Keyboard Response"
+  ]
+}

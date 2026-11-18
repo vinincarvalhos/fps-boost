@@ -1,0 +1,15 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar Multiplane Overlay (MPO)",
+  "description": "Resolve tela piscando e travadas em alguns PCs com mais de um monitor ou drivers NVIDIA.",
+  "details": "Só ligue se você tem cintilação, tela preta rápida ou stutter no navegador/jogo. **Precisa reiniciar.**",
+  "category": [
+    "Jogos"
+  ],
+  "hardware": "gpu",
+  "restart": true,
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Microsoft\\Windows\\Dwm"
+  ]
+}

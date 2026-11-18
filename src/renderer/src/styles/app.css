@@ -1,0 +1,173 @@
+@import '@fontsource-variable/archivo/wdth.css';
+@import 'tailwindcss';
+
+/* Tokens — see docs/design.md ("Placa-mãe") */
+@theme {
+  --color-mask-deep: #082a21;
+  --color-mask: #0e3b2f;
+  --color-mask-raised: #16503f;
+  --color-mask-line: #1f6250;
+  --color-silk: #edefe6;
+  --color-silk-dim: #9fb8ab;
+  --color-gold: #c9a44a;
+  --color-gold-hot: #f0d27a;
+  --color-flux: #e5594f;
+
+  --font-sans: 'Archivo Variable', 'Segoe UI', sans-serif;
+  --radius-chip: 3px;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-mask);
+    color: var(--color-silk);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    font-variation-settings: 'wdth' 100;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-mask-deep);
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-mask-line);
+    border: 3px solid var(--color-mask);
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* Wide display type: the width axis is the expressive device */
+  .type-display {
+    font-variation-settings: 'wdth' 125;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+  }
+  .type-heading {
+    font-variation-settings: 'wdth' 118;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  .type-numeric {
+    font-variation-settings: 'wdth' 62;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  /* Solder-mask surface with a faint copper-pour hatch */
+  .pcb-surface {
+    background-color: var(--color-mask);
+    background-image: radial-gradient(circle at 1px 1px, rgb(237 239 230 / 0.045) 1px, transparent 0);
+    background-size: 14px 14px;
+  }
+
+  /* An IC package: flat, square-ish, with pins drawn on the sides */
+  .ic {
+    position: relative;
+    background: var(--color-mask-deep);
+    border: 1px solid var(--color-mask-line);
+    border-radius: var(--radius-chip);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border-radius: var(--radius-chip);
+    font-weight: 600;
+    font-variation-settings: 'wdth' 108;
+    transition: background-color 120ms, color 120ms, border-color 120ms;
+    cursor: pointer;
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-gold {
+    background: var(--color-gold);
+    color: var(--color-mask-deep);
+  }
+  .btn-gold:not(:disabled):hover {
+    background: var(--color-gold-hot);
+  }
+  .btn-line {
+    border: 1px solid var(--color-mask-line);
+    color: var(--color-silk);
+  }
+  .btn-line:not(:disabled):hover {
+    border-color: var(--color-gold);
+  }
+  .btn-flux {
+    border: 1px solid var(--color-flux);
+    color: var(--color-flux);
+  }
+  .btn-flux:not(:disabled):hover {
+    background: var(--color-flux);
+    color: var(--color-mask-deep);
+  }
+
+  .field {
+    background: var(--color-mask-deep);
+    border: 1px solid var(--color-mask-line);
+    border-radius: var(--radius-chip);
+    padding: 0.5rem 0.75rem;
+    color: var(--color-silk);
+  }
+  .field::placeholder {
+    color: var(--color-silk-dim);
+  }
+
+  .prose-silk p {
+    margin: 0 0 0.75em;
+  }
+  .prose-silk ul {
+    list-style: disc;
+    padding-left: 1.25em;
+    margin: 0 0 0.75em;
+  }
+  .prose-silk strong {
+    color: var(--color-gold-hot);
+    font-weight: 600;
+  }
+  .prose-silk code {
+    background: var(--color-mask-deep);
+    padding: 0 0.3em;
+    border-radius: 2px;
+    font-size: 0.92em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}

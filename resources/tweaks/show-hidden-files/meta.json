@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Mostrar arquivos ocultos",
+  "description": "O Explorador passa a listar arquivos e pastas ocultos, como AppData.",
+  "category": [
+    "Interface"
+  ],
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
+  ]
+}

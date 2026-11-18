@@ -1,0 +1,13 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Ligar o Modo de Jogo do Windows",
+  "description": "Dá prioridade de CPU e GPU ao jogo aberto e segura atualizações automáticas enquanto você joga.",
+  "category": [
+    "Jogos"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\GameBar"
+  ]
+}

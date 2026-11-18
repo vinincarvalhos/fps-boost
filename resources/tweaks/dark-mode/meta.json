@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Modo escuro",
+  "description": "Deixa o Windows e os apps com tema escuro.",
+  "category": [
+    "Interface"
+  ],
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
+  ]
+}

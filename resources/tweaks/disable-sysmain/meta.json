@@ -1,0 +1,10 @@
+{
+  "title": "Desligar o SysMain (Superfetch)",
+  "description": "Para o serviço que pré-carrega programas na RAM. Em SSDs ele quase não ajuda e pode causar picos de disco.",
+  "details": "Indicado para quem tem SSD. Em HD mecânico, os programas podem abrir um pouco mais devagar.",
+  "risk": "safe",
+  "reversible": true,
+  "category": [
+    "Desempenho"
+  ]
+}

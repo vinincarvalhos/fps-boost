@@ -1,0 +1,10 @@
+{
+  "title": "Desligar Teredo",
+  "description": "Desliga o túnel IPv6 sobre IPv4. Alguns jogos mostram NAT estrito ou ping instável por causa dele.",
+  "details": "Pode afetar o chat de grupo do app Xbox em redes sem IPv6 nativo.",
+  "risk": "safe",
+  "reversible": true,
+  "category": [
+    "Rede"
+  ]
+}

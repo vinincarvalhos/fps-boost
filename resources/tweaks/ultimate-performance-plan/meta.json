@@ -1,0 +1,12 @@
+{
+  "title": "Plano de energia Desempenho Máximo",
+  "description": "Ativa o plano oculto do Windows que mantém CPU, disco e PCIe sempre no máximo, sem economia de energia.",
+  "details": "Cria uma cópia do plano **Desempenho Máximo** e o ativa. Ao reverter, o plano que estava ativo antes volta e a cópia é apagada.\n\nEm notebooks na bateria, a autonomia cai bastante.",
+  "risk": "safe",
+  "reversible": true,
+  "recommended": true,
+  "category": [
+    "Desempenho"
+  ],
+  "hardware": "cpu"
+}

@@ -1,0 +1,16 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Agendamento de GPU acelerado por hardware",
+  "description": "Deixa a própria placa de vídeo gerenciar sua fila de trabalho, o que pode reduzir a latência.",
+  "details": "Exige GPU NVIDIA GTX 10 / AMD RX 5000 ou mais nova, com driver atual. **Precisa reiniciar.**",
+  "category": [
+    "Jogos"
+  ],
+  "hardware": "gpu",
+  "restart": true,
+  "recommended": true,
+  "backupKeys": [
+    "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Mostrar extensões de arquivo",
+  "description": "O Explorador mostra .exe, .zip, .png… no nome dos arquivos, o que ajuda a evitar arquivos disfarçados.",
+  "category": [
+    "Interface"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
+  ]
+}

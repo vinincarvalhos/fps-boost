@@ -1,0 +1,10 @@
+{
+  "title": "Desligar o serviço de telemetria",
+  "description": "Para o serviço DiagTrack, que envia dados de uso à Microsoft em segundo plano.",
+  "risk": "safe",
+  "reversible": true,
+  "recommended": true,
+  "category": [
+    "Privacidade"
+  ]
+}

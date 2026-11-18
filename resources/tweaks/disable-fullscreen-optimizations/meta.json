@@ -1,0 +1,14 @@
+{
+  "risk": "caution",
+  "reversible": true,
+  "title": "Tela cheia exclusiva de verdade",
+  "description": "Desliga as \"otimizações de tela cheia\", que rodam jogos em janela sem borda disfarçada.",
+  "details": "Em alguns jogos isso reduz a latência de entrada. Em outros, o alt+tab fica mais lento. Se notar piora, desligue.",
+  "category": [
+    "Jogos"
+  ],
+  "confirm": "Alguns jogos ficam com alt+tab mais lento em tela cheia exclusiva. Você pode reverter a qualquer momento.",
+  "backupKeys": [
+    "HKCU:\\System\\GameConfigStore"
+  ]
+}

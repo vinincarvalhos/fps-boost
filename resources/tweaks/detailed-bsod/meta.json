@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Tela azul com detalhes",
+  "description": "Quando o Windows trava com tela azul, mostra o código e o driver responsável em vez do rosto triste.",
+  "category": [
+    "Sistema"
+  ],
+  "backupKeys": [
+    "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\CrashControl"
+  ]
+}

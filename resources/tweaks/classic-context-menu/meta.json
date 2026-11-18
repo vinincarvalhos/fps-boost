@@ -1,0 +1,10 @@
+{
+  "title": "Menu de contexto completo",
+  "description": "O clique direito no Explorador volta a mostrar todas as opções de uma vez, sem \"Mostrar mais opções\".",
+  "details": "O Explorador é reiniciado para aplicar; janelas de pastas abertas são fechadas.",
+  "risk": "safe",
+  "reversible": true,
+  "category": [
+    "Interface"
+  ]
+}

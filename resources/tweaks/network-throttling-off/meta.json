@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Desligar limite de rede para multimídia",
+  "description": "Remove o limite que o Windows impõe ao tráfego de rede enquanto toca áudio ou vídeo.",
+  "category": [
+    "Rede"
+  ],
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile"
+  ]
+}

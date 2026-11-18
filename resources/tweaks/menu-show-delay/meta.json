@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Menus abrem sem atraso",
+  "description": "Submenus aparecem na hora, sem a espera padrão de 400 ms.",
+  "category": [
+    "Interface"
+  ],
+  "backupKeys": [
+    "HKCU:\\Control Panel\\Desktop"
+  ]
+}

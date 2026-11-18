@@ -1,0 +1,14 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Preferir IPv4 ao IPv6",
+  "description": "Usa IPv4 primeiro quando os dois estão disponíveis. Ajuda quando o IPv6 do provedor tem rota pior.",
+  "details": "O IPv6 continua ligado; muda só a ordem de preferência. **Precisa reiniciar.**",
+  "category": [
+    "Rede"
+  ],
+  "restart": true,
+  "backupKeys": [
+    "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Reduzir telemetria",
+  "description": "Envia à Microsoft só os dados de diagnóstico obrigatórios e desliga anúncios personalizados.",
+  "category": [
+    "Privacidade"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Privacy",
+    "HKCU:\\Software\\Microsoft\\Siuf\\Rules"
+  ]
+}

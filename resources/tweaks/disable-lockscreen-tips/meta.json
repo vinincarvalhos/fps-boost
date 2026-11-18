@@ -1,0 +1,12 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Tela de bloqueio sem dicas e anúncios",
+  "description": "Remove dicas, curiosidades e sugestões de apps da tela de bloqueio e do Iniciar.",
+  "category": [
+    "Privacidade"
+  ],
+  "backupKeys": [
+    "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager"
+  ]
+}

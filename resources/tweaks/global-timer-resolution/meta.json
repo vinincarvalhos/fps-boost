@@ -1,0 +1,15 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Resolução de timer global",
+  "description": "Quando um programa pede um timer mais preciso, o sistema inteiro passa a usá-lo, como no Windows antigo.",
+  "details": "Disponível no Windows 11. Alguns jogos e programas de áudio dependem desse comportamento. **Precisa reiniciar.**",
+  "category": [
+    "Desempenho"
+  ],
+  "hardware": "cpu",
+  "restart": true,
+  "backupKeys": [
+    "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\kernel"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "risk": "safe",
+  "reversible": true,
+  "title": "Mira sem aceleração do mouse",
+  "description": "Desliga \"Aumentar precisão do ponteiro\", para o mesmo movimento da mão sempre virar a mesma distância na tela.",
+  "details": "Vale a partir do próximo login.",
+  "category": [
+    "Jogos"
+  ],
+  "recommended": true,
+  "backupKeys": [
+    "HKCU:\\Control Panel\\Mouse"
+  ]
+}
