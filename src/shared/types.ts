@@ -87,7 +87,26 @@ export const INVOKE_CHANNELS = [
   'updater:state',
   'updater:check',
   'updater:download',
-  'updater:install'
+  'updater:install',
+  'clean:analyze',
+  'clean:run',
+  'clean:folders',
+  'clean:folders-add',
+  'clean:folders-remove',
+  'memory:info',
+  'memory:free',
+  'registry:scan',
+  'registry:clean',
+  'apps:appx-list',
+  'apps:appx-history',
+  'apps:appx-remove',
+  'apps:appx-restore',
+  'apps:programs',
+  'apps:uninstall',
+  'apps:leftovers',
+  'apps:leftovers-remove',
+  'apps:winget-list',
+  'apps:winget-install'
 ] as const
 export type InvokeChannel = (typeof INVOKE_CHANNELS)[number]
 
@@ -95,7 +114,7 @@ export const SEND_CHANNELS = ['window:minimize', 'window:maximize', 'window:clos
 export type SendChannel = (typeof SEND_CHANNELS)[number]
 
 /** Events the main process pushes to the renderer. */
-export const ON_CHANNELS = ['license:changed', 'updater:changed'] as const
+export const ON_CHANNELS = ['license:changed', 'updater:changed', 'progress'] as const
 export type OnChannel = (typeof ON_CHANNELS)[number]
 
 export type Plan = 'free' | 'premium'
@@ -139,7 +158,125 @@ export interface UpdaterState {
 }
 
 export interface ActivityEntry {
-  kind: 'applied' | 'reverted' | 'restore-point'
+  kind: 'applied' | 'reverted' | 'restore-point' | 'cleaned' | 'apps-removed'
   title: string
   at: string
+}
+
+// ---------- Etapa 3: limpeza ----------
+
+export interface CleanCategory {
+  id: string
+  label: string
+  description: string
+  bytes: number
+  files: number
+  /** needs admin and the app isn't elevated, so most files can't be read */
+  needsAdmin: boolean
+  /** not selected by default */
+  optIn: boolean
+}
+
+export interface CleanResult {
+  freedBytes: number
+  deleted: number
+  /** files in use or without permission */
+  skipped: number
+  byCategory: Record<string, number>
+}
+
+export interface MemoryInfo {
+  totalMb: number
+  availableMb: number
+}
+
+export interface MemoryResult {
+  ok: boolean
+  beforeMb: number
+  afterMb: number
+  freedMb: number
+  trimmed: number
+  standbyPurged: boolean
+  error?: string
+}
+
+export interface RegistryIssue {
+  id: string
+  kind: 'startup' | 'app-path' | 'uninstall'
+  /** registry key, e.g. HKCU\Software\Microsoft\Windows\CurrentVersion\Run */
+  key: string
+  /** value name when the issue is a single value (startup entries) */
+  value?: string
+  name: string
+  /** the missing file the entry points to */
+  target: string
+}
+
+export interface RegistryCleanResult {
+  ok: boolean
+  removed: number
+  backupFile?: string
+  error?: string
+}
+
+// ---------- Etapa 3: aplicativos ----------
+
+export type AppxPreset = 'basic' | 'recommended' | 'extreme'
+
+export interface AppxEntry {
+  name: string
+  title: string
+  description: string
+  /** smallest preset that includes this app; null when it isn't in the curated catalog */
+  preset: AppxPreset | null
+  installed: boolean
+  version?: string
+  storeId?: string
+}
+
+export interface AppxRemoved {
+  name: string
+  title: string
+  removedAt: string
+  storeId?: string
+}
+
+export interface ProgramEntry {
+  id: string
+  name: string
+  publisher: string
+  version: string
+  sizeMb: number
+  installDate?: string
+  installLocation?: string
+}
+
+export interface Leftover {
+  id: string
+  kind: 'folder' | 'registry'
+  path: string
+  sizeMb?: number
+}
+
+export interface WingetApp {
+  id: string
+  name: string
+  category: string
+  description: string
+  installed: boolean
+}
+
+export interface OpResult {
+  ok: boolean
+  error?: string
+  done?: number
+  failed?: { id: string; error: string }[]
+}
+
+/** Progress pushed while a long operation runs. */
+export interface ProgressEvent {
+  op: 'analyze' | 'clean' | 'appx-remove' | 'appx-restore' | 'winget' | 'uninstall'
+  current?: string
+  done: number
+  total: number
 }

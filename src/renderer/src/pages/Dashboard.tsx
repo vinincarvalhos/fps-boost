@@ -52,7 +52,9 @@ function Kpi({ label, color, value, unit = '%', foot, children }: { label: strin
 const ACTIVITY = {
   applied: { letter: 'A', bg: 'bg-primary', text: 'Aplicado' },
   reverted: { letter: 'R', bg: 'bg-ram', text: 'Revertido' },
-  'restore-point': { letter: 'P', bg: 'bg-up', text: 'Ponto de restauração' }
+  'restore-point': { letter: 'P', bg: 'bg-up', text: 'Ponto de restauração' },
+  cleaned: { letter: 'L', bg: 'bg-disk', text: 'Limpeza' },
+  'apps-removed': { letter: 'W', bg: 'bg-gpu', text: 'Apps do Windows' }
 } as const
 
 function ago(iso: string): string {

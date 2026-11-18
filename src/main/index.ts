@@ -6,6 +6,7 @@ import { registerBackupIpc } from './ipc/backup'
 import { registerSystemIpc } from './ipc/system'
 import { registerTweakIpc } from './ipc/tweaks'
 import { registerAccountIpc } from './ipc/account'
+import { registerPhase3Ipc } from './ipc/phase3'
 import { initLicense } from './services/license'
 import { initUpdater } from './services/updater'
 import { store } from './services/store'
@@ -80,6 +81,7 @@ if (!app.requestSingleInstanceLock()) {
     registerBackupIpc()
     registerAppIpc()
     registerAccountIpc()
+    registerPhase3Ipc()
     initLicense().catch((err) => log.error('[license] init', err))
     initUpdater()
 

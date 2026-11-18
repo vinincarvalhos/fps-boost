@@ -41,8 +41,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Otimizar',
     items: [
-      { path: '/clean', label: 'Limpeza', icon: Sparkles, phase: 3, summary: 'Arquivos temporários, caches, RAM e registro.' },
-      { path: '/apps', label: 'Aplicativos', icon: Package, phase: 3, summary: 'Remova apps nativos do Windows e desinstale programas sem deixar sobras.' },
+      { path: '/clean', label: 'Limpeza', icon: Sparkles, phase: 1, summary: 'Arquivos temporários, caches, RAM e registro.' },
+      { path: '/apps', label: 'Aplicativos', icon: Package, phase: 1, summary: 'Remova apps nativos do Windows e desinstale programas sem deixar sobras.' },
       { path: '/utilities', label: 'Utilitários', icon: Wrench, phase: 5, summary: 'DNS mais rápido, otimização de disco e atalhos do sistema.' }
     ]
   },

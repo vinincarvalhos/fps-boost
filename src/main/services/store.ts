@@ -1,5 +1,5 @@
 import Store from 'electron-store'
-import type { ActivityEntry, Settings } from '@shared/types'
+import type { ActivityEntry, AppxRemoved, Settings } from '@shared/types'
 
 interface Schema {
   settings: Settings
@@ -8,6 +8,10 @@ interface Schema {
   firstTweakRestorePointDone: boolean
   /** most recent first, capped */
   history: ActivityEntry[]
+  /** apps removed by the debloat tool, most recent first */
+  appxHistory: AppxRemoved[]
+  /** folders the user added to the cleaner */
+  cleanFolders: string[]
 }
 
 export const store = new Store<Schema>({
@@ -16,7 +20,9 @@ export const store = new Store<Schema>({
     settings: { autostart: false, tray: false, autoRestorePoint: true },
     tweaks: {},
     firstTweakRestorePointDone: false,
-    history: []
+    history: [],
+    appxHistory: [],
+    cleanFolders: []
   }
 })
 

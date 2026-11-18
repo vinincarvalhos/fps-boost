@@ -46,11 +46,18 @@ $env:GH_TOKEN = "SEU_TOKEN"; pnpm release
 
 Isso cria um rascunho de release com o instalador e o `latest.yml`; abra o release no GitHub e clique em **Publish**. Quem tem o app instalado vê "Versão 0.2.0 disponível" no topo.
 
+## Limpeza e aplicativos
+
+- **Limpeza**: a análise é gratuita; limpar arquivos, RAM e registro pede Premium. A limpeza nunca segue atalhos/junções, nunca usa como raiz uma pasta do sistema ou pessoal e pula arquivos em uso. As entradas de registro removidas são copiadas para Backup antes.
+- **Apps do Windows**: catálogo em `resources/appx-catalog.json` (presets Básico, Recomendado e Extremo). A Store, o winget, o Terminal, a Segurança do Windows e os codecs nunca são listados (`PROTECTED` em `src/main/services/appx.ts`).
+- **Programas**: o desinstalador do próprio programa roda; depois o app procura sobras com nome exatamente igual. Pastas vão para a Lixeira.
+- **Instalar**: lista em `resources/winget-catalog.json`.
+
 ## Etapas
 
 1. **Núcleo** (pronto): painel, ajustes, backup, configurações
 2. **Licença e atualização automática** (pronto)
-3. Limpeza e aplicativos
+3. **Limpeza e aplicativos** (pronto): limpeza de arquivos, RAM e registro; remoção de apps do Windows, desinstalador com sobras e instalação via winget
 4. Jogos e modo jogo
 5. Placa de vídeo, hardware, drivers e utilitários
 6. BIOS

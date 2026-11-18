@@ -49,7 +49,8 @@ export async function runPsFile(file: string, timeoutMs = 120_000): Promise<PsRe
 
 /** Runs a command that prints JSON (ConvertTo-Json) and parses it. */
 export async function runPsJson<T>(command: string, timeoutMs?: number): Promise<T | null> {
-  const res = await runPs(`${command} | ConvertTo-Json -Depth 4 -Compress`, timeoutMs)
+  // `& { }` lets statements like foreach feed the pipeline, which `foreach (...) {} | X` can't
+  const res = await runPs(`& {\n${command}\n} | ConvertTo-Json -Depth 4 -Compress`, timeoutMs)
   if (res.code !== 0 || !res.stdout) return null
   try {
     return JSON.parse(res.stdout) as T

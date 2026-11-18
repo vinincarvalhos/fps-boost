@@ -10,6 +10,10 @@ files:
 extraResources:
   - from: resources/tweaks
     to: tweaks
+  - from: resources/appx-catalog.json
+    to: appx-catalog.json
+  - from: resources/winget-catalog.json
+    to: winget-catalog.json
 win:
   icon: build/icon.ico
   target: nsis

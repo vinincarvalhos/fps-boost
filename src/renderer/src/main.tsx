@@ -8,6 +8,8 @@ import { Tweaks } from './pages/Tweaks'
 import { Backup } from './pages/Backup'
 import { Settings } from './pages/Settings'
 import { License } from './pages/License'
+import { Clean } from './pages/Clean'
+import { Apps } from './pages/Apps'
 import { ComingSoon } from './pages/ComingSoon'
 import { NAV } from './lib/nav'
 
@@ -21,6 +23,8 @@ createRoot(document.getElementById('root')!).render(
           <Route path="backup" element={<Backup />} />
           <Route path="settings" element={<Settings />} />
           <Route path="license" element={<License />} />
+          <Route path="clean" element={<Clean />} />
+          <Route path="apps" element={<Apps />} />
           {NAV.filter((n) => n.phase > 1).map((n) => (
             <Route key={n.path} path={n.path.slice(1)} element={<ComingSoon item={n} />} />
           ))}
