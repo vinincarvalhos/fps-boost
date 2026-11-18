@@ -59,7 +59,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { path: '/gpu-optimizer', label: 'Placa de vídeo', icon: MonitorCog, phase: 1, summary: 'Configurações de driver NVIDIA e AMD para menos latência.' },
       { path: '/hardware', label: 'Dispositivos', icon: Cpu, phase: 1, summary: 'Interrupções em modo MSI, USB e periféricos.' },
       { path: '/drivers', label: 'Drivers', icon: HardDriveDownload, phase: 1, summary: 'Verifica e baixa drivers atualizados.' },
-      { path: '/bios', label: 'BIOS', icon: MemoryStick, phase: 6, summary: 'Reiniciar direto na configuração da placa-mãe.' }
+      { path: '/bios', label: 'BIOS', icon: MemoryStick, phase: 1, summary: 'Diagnóstico da BIOS e reinício direto na configuração da placa-mãe.' }
     ]
   },
   {

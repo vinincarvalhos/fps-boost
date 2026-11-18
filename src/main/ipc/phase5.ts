@@ -8,6 +8,7 @@ import { amdSoftwarePath, applyNvidia, downloadNpi, gpuMetrics, gpuState, NPI, N
 import { isPremium } from '../services/license'
 import { logActivity } from '../services/store'
 import { applyDns, benchmarkDns, flushDns, listVolumes, optimizeVolume, resetNetwork } from '../services/utilities'
+import { biosReport } from '../services/bios'
 
 const PREMIUM = 'O otimizador da placa de vídeo faz parte do plano Premium. Ative sua chave em Licença.'
 const running = new Set<string>()
@@ -82,4 +83,16 @@ export function registerPhase5Ipc(): void {
   ipcMain.handle('utils:optimize', (_e, letter: string) => once(`opt-${letter}`, BUSY, () => optimizeVolume(String(letter))))
   ipcMain.handle('utils:flush-dns', () => flushDns())
   ipcMain.handle('utils:reset-network', () => resetNetwork())
+
+  // ---- BIOS (read-only diagnosis; nothing is written to the firmware) ----
+  let lastSupportUrl: string | null = null
+  ipcMain.handle('bios:report', async () => {
+    const r = await biosReport()
+    lastSupportUrl = r.supportUrl
+    return r
+  })
+  // the URL is computed here from the board name, never taken from the page
+  ipcMain.handle('bios:open-support', () => {
+    if (lastSupportUrl?.startsWith('https://')) shell.openExternal(lastSupportUrl)
+  })
 }

@@ -66,6 +66,10 @@ Isso cria um rascunho de release com o instalador e o `latest.yml`; abra o relea
 - **Drivers**: inventário com a idade de cada driver e instalação de atualizações pelo Windows Update; o driver de vídeo aponta para o instalador oficial do fabricante.
 - **Utilitários**: teste de velocidade de DNS e troca para o mais rápido (ou volta ao automático), TRIM/desfragmentação, limpar o cache de DNS, redefinir a rede e reiniciar o Explorador.
 
+## BIOS
+
+Diagnóstico **só de leitura**: o FpsBoost nunca grava na BIOS. Pelo Windows, ele verifica o perfil de memória (XMP/EXPO, comparando a velocidade atual com a do código do módulo), o Resizable BAR (tamanho do BAR1 no `nvidia-smi`), o Secure Boot, o TPM 2.0, o modo UEFI, a virtualização e a idade da BIOS. Para cada item, explica onde fica a opção (os nomes mudam entre AMD e Intel), abre a página de suporte do fabricante e reinicia direto na BIOS (`shutdown /r /fw`). Em notebooks e PCs de marca, o nome mostrado é o do computador (ex.: Acer Nitro AN515-46), não o código da placa.
+
 ## Etapas
 
 1. **Núcleo** (pronto): painel, ajustes, backup, configurações
@@ -73,4 +77,4 @@ Isso cria um rascunho de release com o instalador e o `latest.yml`; abra o relea
 3. **Limpeza e aplicativos** (pronto): limpeza de arquivos, RAM e registro; remoção de apps do Windows, desinstalador com sobras e instalação via winget
 4. **Jogos e Modo jogo** (pronto): biblioteca com capas, ajustes por jogo e perfil de desempenho automático
 5. **Placa de vídeo, dispositivos, drivers e utilitários** (pronto)
-6. BIOS
+6. **BIOS** (pronto): diagnóstico só de leitura e reinício direto na BIOS

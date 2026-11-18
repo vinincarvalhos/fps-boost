@@ -147,7 +147,9 @@ export const INVOKE_CHANNELS = [
   'utils:volumes',
   'utils:optimize',
   'utils:flush-dns',
-  'utils:reset-network'
+  'utils:reset-network',
+  'bios:report',
+  'bios:open-support'
 ] as const
 export type InvokeChannel = (typeof INVOKE_CHANNELS)[number]
 
@@ -459,4 +461,27 @@ export interface DiskVolume {
   media: 'SSD' | 'HDD' | 'Unspecified'
   sizeGb: number
   freeGb: number
+}
+
+// ---------- Etapa 6: BIOS ----------
+
+export interface BiosCheck {
+  id: 'xmp' | 'rebar' | 'secureboot' | 'tpm' | 'uefi' | 'virtualization' | 'update'
+  title: string
+  /** ok: nothing to do; action: worth changing in the BIOS; info: depends on use; unknown: Windows can't tell */
+  status: 'ok' | 'action' | 'info' | 'unknown'
+  detail: string
+  /** where the option usually lives in the BIOS menus */
+  howTo?: string
+}
+
+export interface BiosReport {
+  vendor: string
+  version: string
+  date?: string
+  board: string
+  boardVendor: string
+  laptop: boolean
+  checks: BiosCheck[]
+  supportUrl: string
 }

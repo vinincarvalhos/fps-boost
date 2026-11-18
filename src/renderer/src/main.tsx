@@ -17,6 +17,7 @@ import { Gpu } from './pages/Gpu'
 import { Devices } from './pages/Devices'
 import { Drivers } from './pages/Drivers'
 import { Utilities } from './pages/Utilities'
+import { Bios } from './pages/Bios'
 import { ComingSoon } from './pages/ComingSoon'
 import { NAV } from './lib/nav'
 
@@ -40,6 +41,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="hardware" element={<Devices />} />
           <Route path="drivers" element={<Drivers />} />
           <Route path="utilities" element={<Utilities />} />
+          <Route path="bios" element={<Bios />} />
           {NAV.filter((n) => n.phase > 1).map((n) => (
             <Route key={n.path} path={n.path.slice(1)} element={<ComingSoon item={n} />} />
           ))}
