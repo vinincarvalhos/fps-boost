@@ -8,7 +8,7 @@ import type { LicenseResult, LicenseState } from '@shared/types'
 import { LICENSE_PUBLIC_KEY } from './license-key'
 import { runPs } from './powershell'
 
-const API = (import.meta.env.MAIN_VITE_LICENSE_API as string | undefined) ?? 'https://fps-boost.vercel.app'
+const API = (import.meta.env.MAIN_VITE_LICENSE_API as string | undefined) ?? 'https://fps-boost-server.vercel.app'
 const REFRESH_EVERY_MS = 12 * 3600_000
 
 interface TokenPayload {

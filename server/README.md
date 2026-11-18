@@ -21,13 +21,13 @@ As rotas `admin` exigem o cabeçalho `Authorization: Bearer <ADMIN_SECRET>`. As 
 2. **Projeto**: na Vercel, importe o repositório `vinincarvalhos/fps-boost` e defina **Root Directory = `server`**.
 3. **Banco**: em *Storage*, crie um banco **Upstash Redis** (plano grátis) e conecte ao projeto. Isso cria `KV_REST_API_URL` e `KV_REST_API_TOKEN` (ou `UPSTASH_REDIS_REST_URL` / `_TOKEN`), que o servidor já reconhece.
 4. **Variáveis**: em *Settings → Environment Variables*, adicione `LICENSE_PRIVATE_KEY` e `ADMIN_SECRET` com os valores de `server/.env.local`.
-5. **Deploy**. Se a URL final não for `https://fps-boost.vercel.app`, crie `.env` na raiz do app com `MAIN_VITE_LICENSE_API=<sua URL>` antes de gerar o instalador.
+5. **Deploy**. Se a URL final não for `https://fps-boost-server.vercel.app`, crie `.env` na raiz do app com `MAIN_VITE_LICENSE_API=<sua URL>` antes de gerar o instalador.
 
 ## Gerar chaves
 
 ```powershell
 $admin = 'COLE_O_ADMIN_SECRET'
-Invoke-RestMethod -Method Post -Uri https://fps-boost.vercel.app/api/admin/keys -Headers @{ Authorization = "Bearer $admin" } -ContentType 'application/json' -Body '{"count":5,"maxMachines":2,"note":"lote de teste"}'
+Invoke-RestMethod -Method Post -Uri https://fps-boost-server.vercel.app/api/admin/keys -Headers @{ Authorization = "Bearer $admin" } -ContentType 'application/json' -Body '{"count":5,"maxMachines":2,"note":"lote de teste"}'
 ```
 
 `expiresInDays` é opcional (sem ele, a chave não vence).
