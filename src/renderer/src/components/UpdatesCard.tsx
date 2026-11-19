@@ -21,7 +21,7 @@ function describe(u: UpdaterState): string {
     case 'error':
       return u.error ?? 'Não foi possível verificar atualizações.'
     default:
-      return 'O FpsBoost procura atualizações ao abrir e a cada 6 horas.'
+      return 'O FpsBoost procura atualizações ao abrir e a cada hora.'
   }
 }
 

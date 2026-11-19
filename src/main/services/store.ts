@@ -23,6 +23,8 @@ interface Schema {
   msiChanged: string[]
   /** USB selective suspend values before FpsBoost turned it off */
   usbSuspendStash: { ac: number; dc: number } | null
+  /** newest version seen on GitHub, so the top bar shows it the moment the app opens */
+  knownUpdate: { version: string; releaseNotes?: string } | null
 }
 
 export const store = new Store<Schema>({
@@ -40,7 +42,8 @@ export const store = new Store<Schema>({
     gpuBackup: null,
     gpuApplied: null,
     msiChanged: [],
-    usbSuspendStash: null
+    usbSuspendStash: null,
+    knownUpdate: null
   }
 })
 
