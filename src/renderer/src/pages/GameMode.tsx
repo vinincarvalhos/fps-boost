@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CheckCircle2, Crown, Gamepad2, Power, Radar } from 'lucide-react'
-import type { GameModePrefs, GameModeState } from '@shared/types'
+import { GAME_MODE_ENABLED, type GameModePrefs, type GameModeState } from '@shared/types'
 import { Checkbox } from '../components/Checkbox'
 import { PageHeader } from '../components/PageHeader'
 import { Toggle } from '../components/Toggle'
@@ -28,7 +28,37 @@ function since(iso?: string): string {
   return min < 1 ? 'agora há pouco' : min < 60 ? `há ${min} min` : `há ${Math.floor(min / 60)} h ${min % 60} min`
 }
 
+/** Shown instead of the page while Game mode is switched off. */
+function Paused() {
+  return (
+    <>
+      <PageHeader title="Modo jogo" lead="Um perfil de desempenho que liga sozinho quando um jogo da sua Biblioteca abre, e desfaz tudo quando ele fecha." />
+      <section aria-labelledby="paused" className="card max-w-[680px] p-7">
+        <Gamepad2 size={28} className="text-muted" aria-hidden />
+        <h2 id="paused" className="mt-3 text-[21px] font-semibold">
+          O Modo jogo está desligado nesta versão
+        </h2>
+        <p className="mt-1.5 text-muted">
+          Alguns jogadores tiveram uso alto de CPU e travadas com ele ligado. Enquanto a correção não sai, ele não liga nem sozinho nem manualmente, e não mexe em nada do
+          Windows. Se ele estava ligado numa versão anterior, o plano de energia e os serviços já voltaram ao normal.
+        </p>
+        <p className="mt-3 text-muted">
+          Os ajustes por jogo continuam disponíveis na{' '}
+          <Link to="/games" className="text-primary hover:underline">
+            Biblioteca
+          </Link>
+          .
+        </p>
+      </section>
+    </>
+  )
+}
+
 export function GameMode() {
+  return GAME_MODE_ENABLED ? <GameModeSettings /> : <Paused />
+}
+
+function GameModeSettings() {
   const premium = usePremium()
   const openUpsell = useAccount((s) => s.openUpsell)
   const [state, setState] = useState<GameModeState | null>(null)

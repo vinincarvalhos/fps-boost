@@ -160,7 +160,7 @@ function Sidebar() {
                     <>
                       <item.icon size={16} strokeWidth={1.75} className={isActive ? 'text-primary' : 'text-muted'} />
                       <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                      {item.phase > 1 && <span className="shrink-0 text-[11px] text-muted">Em breve</span>}
+                      {(item.note || item.phase > 1) && <span className="shrink-0 text-[11px] text-muted">{item.note ?? 'Em breve'}</span>}
                     </>
                   )}
                 </NavLink>

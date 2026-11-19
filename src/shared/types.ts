@@ -58,9 +58,18 @@ export interface Settings {
   tray: boolean
   autoRestorePoint: boolean
   theme: ThemePref
+  /** translucent window (Windows 11 acrylic); ignored where Windows doesn't support it */
+  translucent: boolean
 }
 
 /** Channels the renderer may call with invoke(). Keep in sync with src/main/ipc. */
+/**
+ * Game mode is switched off while players still report CPU spikes and stutter with it.
+ * Off: nothing activates (manual or automatic), the process watcher never starts, and a
+ * session left over from an older version is still undone at startup.
+ */
+export const GAME_MODE_ENABLED = false
+
 export const INVOKE_CHANNELS = [
   'system:info',
   'system:live',
@@ -76,6 +85,8 @@ export const INVOKE_CHANNELS = [
   'backup:registry-restore',
   'settings:get',
   'settings:set',
+  'app:glass',
+  'app:glass-info',
   'app:open-logs',
   'app:restart-explorer',
   'app:reboot',

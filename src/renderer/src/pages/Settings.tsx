@@ -4,7 +4,7 @@ import { PageHeader } from '../components/PageHeader'
 import { Toggle } from '../components/Toggle'
 import { toast } from '../lib/toast'
 import { UpdatesCard } from '../components/UpdatesCard'
-import { useTheme } from '../lib/theme'
+import { syncGlass, useTheme } from '../lib/theme'
 import type { ThemePref } from '@shared/types'
 
 const THEMES: { id: ThemePref; label: string }[] = [
@@ -36,6 +36,7 @@ function ThemePicker() {
 }
 
 const OPTIONS: { key: keyof SettingsT; title: string; text: string }[] = [
+  { key: 'translucent', title: 'Janela translúcida', text: 'O fundo da janela deixa ver o que está atrás, desfocado. Precisa do Windows 11.' },
   { key: 'autostart', title: 'Abrir com o Windows', text: 'O FpsBoost inicia minimizado quando você entra no Windows.' },
   { key: 'tray', title: 'Manter na bandeja', text: 'Fechar a janela deixa o FpsBoost rodando ao lado do relógio.' },
   { key: 'autoRestorePoint', title: 'Ponto de restauração automático', text: 'Cria um ponto de restauração antes do primeiro ajuste aplicado.' }
@@ -56,13 +57,26 @@ function Row({ title, text, control }: { title: string; text: string; control: R
 export function Settings() {
   const [s, setS] = useState<SettingsT | null>(null)
   const [version, setVersion] = useState('')
+  const [glassNote, setGlassNote] = useState<string | null>(null)
 
   useEffect(() => {
     window.fps.invoke<SettingsT>('settings:get').then(setS)
     window.fps.invoke<string>('app:version').then(setVersion)
+    window.fps.invoke<{ supported: boolean; windowsTransparency: boolean }>('app:glass-info').then((g) =>
+      setGlassNote(
+        !g.supported
+          ? 'Precisa do Windows 11 (versão 22H2 ou mais nova). Neste PC a janela fica com cores sólidas.'
+          : !g.windowsTransparency
+            ? 'Os "Efeitos de transparência" do Windows estão desligados, então a janela fica cinza sólida. Ligue em Configurações do Windows > Personalização > Cores.'
+            : null
+      )
+    )
   }, [])
 
-  const set = async (patch: Partial<SettingsT>) => setS(await window.fps.invoke<SettingsT>('settings:set', patch))
+  const set = async (patch: Partial<SettingsT>) => {
+    setS(await window.fps.invoke<SettingsT>('settings:set', patch))
+    if ('translucent' in patch) syncGlass()
+  }
 
   const action = async (channel: 'app:restart-explorer' | 'app:reboot-firmware', okText: string) => {
     const res = await window.fps.invoke<{ ok: boolean; error?: string }>(channel)
@@ -85,7 +99,7 @@ export function Settings() {
               <Row
                 key={o.key}
                 title={o.title}
-                text={o.text}
+                text={o.key === 'translucent' && glassNote ? glassNote : o.text}
                 control={<Toggle label={o.title} on={!!s?.[o.key]} disabled={!s} onToggle={() => set({ [o.key]: !s?.[o.key] })} />}
               />
             ))}

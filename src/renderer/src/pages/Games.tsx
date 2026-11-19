@@ -258,10 +258,10 @@ export function Games() {
               {/* store-utility-card: image on top, name and details below — no text over the art */}
               <button
                 onClick={() => setOpen(g)}
-                className={`card block w-full p-3 text-left transition-transform active:scale-[0.98] ${g.hidden ? 'opacity-50' : ''}`}
+                className={`game-card card group block w-full p-3 text-left ${g.hidden ? 'opacity-50' : ''}`}
               >
-                <div className="relative">
-                  <Cover game={g} className="aspect-[2/3] w-full rounded-[8px]" />
+                <div className="relative overflow-hidden rounded-[8px]">
+                  <Cover game={g} className="game-cover aspect-[2/3] w-full" />
                   {Object.values(g.settings).some(Boolean) && (
                     <span className="absolute right-2 top-2 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[#1d1d1f]">Otimizado</span>
                   )}
@@ -272,7 +272,7 @@ export function Games() {
                   {SOURCES[g.source].label}
                   {g.sizeGb ? `, ${g.sizeGb.toLocaleString('pt-BR')} GB` : ''}
                 </p>
-                <span className="mt-1 inline-block text-[13px] text-primary">Ver detalhes</span>
+                <span className="mt-1 inline-block text-[13px] text-primary group-hover:underline">Ver detalhes</span>
               </button>
             </li>
           ))}

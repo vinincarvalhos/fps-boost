@@ -1,3 +1,4 @@
+import { GAME_MODE_ENABLED } from '@shared/types'
 import {
   Archive,
   Cpu,
@@ -23,6 +24,8 @@ export interface NavItem {
   /** delivery phase; > 1 shows a "coming" screen for now */
   phase: number
   summary: string
+  /** short grey note next to the label, e.g. a feature that is switched off */
+  note?: string
 }
 
 export interface NavGroup {
@@ -50,7 +53,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Jogos',
     items: [
       { path: '/games', label: 'Biblioteca', icon: Trophy, phase: 1, summary: 'Seus jogos da Steam, Epic e outros num só lugar.' },
-      { path: '/gamemode', label: 'Modo jogo', icon: Gamepad2, phase: 1, summary: 'Um perfil de desempenho que liga sozinho quando o jogo abre.' }
+      { path: '/gamemode', label: 'Modo jogo', icon: Gamepad2, phase: 1, summary: 'Um perfil de desempenho que liga sozinho quando o jogo abre.', note: GAME_MODE_ENABLED ? undefined : 'Pausado' }
     ]
   },
   {

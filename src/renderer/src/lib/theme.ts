@@ -12,6 +12,16 @@ export function followColorScheme(): void {
   mq.addEventListener('change', apply)
 }
 
+/**
+ * Mirrors the main process's translucency (setting on and Windows supports acrylic) as
+ * `data-glass` on <html>; the CSS then makes the canvas, sidebar and cards see-through.
+ */
+export async function syncGlass(): Promise<void> {
+  const on = await window.fps.invoke<boolean>('app:glass').catch(() => false)
+  if (on) document.documentElement.dataset.glass = ''
+  else delete document.documentElement.dataset.glass
+}
+
 interface ThemeState {
   pref: ThemePref
   load: () => Promise<void>

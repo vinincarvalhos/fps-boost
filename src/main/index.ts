@@ -13,7 +13,7 @@ import { initGameMode, shutdownGameMode } from './services/gamemode'
 import { initLicense } from './services/license'
 import { initUpdater } from './services/updater'
 import { store } from './services/store'
-import { applyTheme, windowBackground } from './services/theme'
+import { applyTheme, glassOn, windowBackground } from './services/theme'
 import { initTray, isTrayEnabled, setTrayEnabled } from './tray'
 
 // Dev only: lets tools capture screenshots over the DevTools protocol.
@@ -35,6 +35,8 @@ function createWindow(): void {
     frame: false,
     show: false,
     backgroundColor: windowBackground(),
+    // Windows 11 acrylic behind the page; the CSS makes the canvas and sidebar see-through
+    backgroundMaterial: glassOn() ? 'acrylic' : 'none',
     title: 'FpsBoost',
     icon: join(app.getAppPath(), 'build', 'icon.png'),
     webPreferences: {

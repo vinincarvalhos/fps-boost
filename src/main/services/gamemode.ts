@@ -2,7 +2,7 @@ import { BrowserWindow } from 'electron'
 import os from 'node:os'
 import { spawn, type ChildProcess } from 'node:child_process'
 import log from 'electron-log/main'
-import type { Game, GameModePrefs, GameModeState } from '@shared/types'
+import { GAME_MODE_ENABLED, type Game, type GameModePrefs, type GameModeState } from '@shared/types'
 import { games } from './games/library'
 import { isPremium } from './license'
 import { freeMemory } from './memory'
@@ -114,7 +114,7 @@ function stopWatcher(): void {
 
 /** Runs the watcher only while automatic activation is on and the license allows it. */
 function syncWatcher(): void {
-  if (gameModePrefs().autoActivate && isPremium()) startWatcher()
+  if (GAME_MODE_ENABLED && gameModePrefs().autoActivate && isPremium()) startWatcher()
   else stopWatcher()
 }
 
@@ -146,6 +146,7 @@ interface RestoreInfo {
 
 export async function activate(game: { id: string; name: string } | null, manual: boolean): Promise<GameModeState> {
   if (state.active) return state
+  if (!GAME_MODE_ENABLED) return publish({ error: 'O Modo jogo está desligado nesta versão enquanto é corrigido.' })
   if (!isPremium()) return publish({ error: 'O Modo jogo faz parte do plano Premium. Ative sua chave em Licença.' })
   const prefs = gameModePrefs()
   const applied: string[] = []

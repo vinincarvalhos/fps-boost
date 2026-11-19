@@ -94,6 +94,35 @@
   --color-danger: #ff453a;
 }
 
+/*
+ * Translucent window (html[data-glass], Windows 11 acrylic behind the page). Like the current
+ * macOS/iOS look: the sidebar and the top bar are the most see-through, the page canvas a little
+ * less, and cards stay mostly solid so text keeps its contrast. Dark tiles stay opaque.
+ */
+:root[data-glass] {
+  --color-bg: rgb(245 245 247 / 0.62);
+  --color-bg-2: rgb(255 255 255 / 0.35);
+  --color-card: rgb(255 255 255 / 0.74);
+  --color-card-2: rgb(0 0 0 / 0.05);
+  --color-nav: rgb(0 0 0 / 0.78);
+  --color-line: rgb(0 0 0 / 0.1);
+  --color-panel: rgb(255 255 255 / 0.9);
+}
+:root[data-glass][data-theme='dark'] {
+  --color-bg: rgb(0 0 0 / 0.5);
+  --color-bg-2: rgb(30 30 32 / 0.3);
+  --color-card: rgb(36 36 38 / 0.7);
+  --color-card-2: rgb(255 255 255 / 0.07);
+  --color-nav: rgb(0 0 0 / 0.6);
+  --color-line: rgb(255 255 255 / 0.12);
+  --color-panel: rgb(36 36 38 / 0.92);
+}
+/* dialogs float over the page: frosted, so the content behind doesn't fight with the text */
+:root[data-glass] dialog {
+  background: var(--color-panel);
+  backdrop-filter: blur(30px) saturate(1.6);
+}
+
 @layer base {
   html,
   body,
@@ -120,6 +149,16 @@
   h3 {
     font-family: var(--font-display);
     letter-spacing: -0.022em; /* the "tight" headline cadence */
+  }
+  /* Tailwind's reset leaves buttons with the arrow cursor; anything clickable gets the hand */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='radio'],
+  [role='switch'],
+  summary,
+  label[for],
+  select {
+    cursor: pointer;
   }
   :focus-visible {
     outline: 2px solid var(--color-primary-focus);
@@ -286,4 +325,35 @@
 }
 .no-drag {
   -webkit-app-region: no-drag;
+}
+
+/* Library cards: the card lifts a little and the cover zooms gently; pressing pushes it back down. */
+.game-card {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.game-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-line));
+}
+.game-card:active {
+  transform: translateY(0) scale(0.98);
+}
+.game-card .game-cover {
+  transition: transform 0.35s ease;
+}
+.game-card:hover .game-cover {
+  transform: scale(1.04);
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-card,
+  .game-card .game-cover {
+    transition: none;
+  }
+  .game-card:hover,
+  .game-card:hover .game-cover {
+    transform: none;
+  }
 }

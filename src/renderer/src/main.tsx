@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import './styles/app.css'
-import { followColorScheme } from './lib/theme'
+import { followColorScheme, syncGlass } from './lib/theme'
 import { Shell } from './components/Shell'
 import { Dashboard } from './pages/Dashboard'
 import { Tweaks } from './pages/Tweaks'
@@ -22,6 +22,7 @@ import { ComingSoon } from './pages/ComingSoon'
 import { NAV } from './lib/nav'
 
 followColorScheme() // before the first paint
+syncGlass()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

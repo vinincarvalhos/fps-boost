@@ -5,7 +5,7 @@ import type { Settings } from '@shared/types'
 import { runPs } from '../services/powershell'
 import { store } from '../services/store'
 import { setTrayEnabled } from '../tray'
-import { applyTheme } from '../services/theme'
+import { applyGlass, applyTheme, glassOn, glassSupported, windowsTransparency } from '../services/theme'
 
 function applyAutostart(enabled: boolean): void {
   app.setLoginItemSettings({ openAtLogin: enabled, args: ['--hidden'] })
@@ -20,11 +20,14 @@ export function registerAppIpc(): void {
     if ('autostart' in patch) applyAutostart(next.autostart)
     if ('tray' in patch) setTrayEnabled(next.tray)
     if ('theme' in patch) applyTheme(next.theme)
+    if ('translucent' in patch) applyGlass()
     return next
   })
 
   ipcMain.handle('app:open-logs', () => shell.openPath(dirname(log.transports.file.getFile().path)))
   ipcMain.handle('app:version', () => app.getVersion())
+  ipcMain.handle('app:glass', () => glassOn())
+  ipcMain.handle('app:glass-info', async () => ({ supported: glassSupported(), windowsTransparency: await windowsTransparency() }))
   ipcMain.handle('history:list', () => store.get('history'))
   ipcMain.handle('app:is-admin', async () => (await runPs('([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)')).stdout === 'True')
   ipcMain.handle('app:restart-explorer', async () => {
